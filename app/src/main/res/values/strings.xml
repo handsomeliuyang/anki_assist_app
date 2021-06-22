@@ -10,4 +10,12 @@
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
+
+
+    <string name="ankidroid_not_found_title">AnkiDroid App没有找到</string>
+    <string name="ankidroid_not_found_description">请先安装 AnkiDroid App</string>
+
+    <string name="missingpermissions_title">未授权</string>
+    <string name="missingpermissions_description">不授权，无法获取 AnkiDroid 卡片。</string>
+
 </resources>
