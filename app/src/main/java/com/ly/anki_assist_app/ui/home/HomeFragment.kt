@@ -48,7 +48,12 @@ class HomeFragment : Fragment() {
 //        homeViewModel.text.observe(viewLifecycleOwner, Observer {
 //            textView.text = it
 //        })
-        checkAllPermissions();
+        val retryBtn = binding.retry
+        retryBtn.setOnClickListener {
+            checkAllPermissions()
+        }
+
+        checkAllPermissions()
         return root
     }
 
@@ -94,9 +99,6 @@ class HomeFragment : Fragment() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-
-        Log.d("HomeFragment", "PermissionsResult")
-
         if(requestCode != PERMISSION_REQUEST_CODE) {
             return
         }
@@ -122,7 +124,7 @@ class HomeFragment : Fragment() {
      * 获取卡片数据
      */
     private fun listDecks() {
-
+        homeViewModel.loadDecks()
     }
 
     private fun permissionsGranted(): Boolean {

@@ -16,7 +16,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Anki_assist_app">
+        android:theme="@style/Theme.Anki_assist_app"
+        android:name=".App">
         <activity
             android:name=".MainActivity"
             android:exported="true"
