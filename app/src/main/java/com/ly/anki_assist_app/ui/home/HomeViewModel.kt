@@ -14,7 +14,7 @@ class HomeViewModel : ViewModel() {
 
     fun loadDecks() {
 
-        AnkiDroidHelper.instance.getDeckList()
+        AnkiDroidHelper.instance.getDueDeckList()
 
     }
 }

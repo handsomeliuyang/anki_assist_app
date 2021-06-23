@@ -8,6 +8,7 @@ import com.ly.anki_assist_app.utils.AnkiDroidHelper
 class App : Application() {
 
     companion object {
+        @SuppressLint("StaticFieldLeak")
         lateinit var context: Context
     }
 
@@ -15,7 +16,7 @@ class App : Application() {
         super.onCreate()
         App.context = this.applicationContext
 
-        AnkiDroidHelper.instance.init(this.applicationContext)
+//        AnkiDroidHelper.instance.init(this.applicationContext)
     }
 
 }
