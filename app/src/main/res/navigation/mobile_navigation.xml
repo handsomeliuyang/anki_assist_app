@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/nav_home"
         android:name="com.ly.anki_assist_app.ui.home.HomeFragment"
-        android:label="@string/menu_home"
+        android:label="@string/home_title"
         tools:layout="@layout/fragment_home" />
 
     <fragment
