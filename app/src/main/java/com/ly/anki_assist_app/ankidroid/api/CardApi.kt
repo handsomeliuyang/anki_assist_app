@@ -1,11 +1,13 @@
 package com.ly.anki_assist_app.ankidroid.api
 
+import android.content.ContentValues
 import android.net.Uri
 import com.ichi2.anki.FlashCardsContract
 import com.ly.anki_assist_app.App
 import com.ly.anki_assist_app.ankidroid.model.AnkiCard
 import com.ly.anki_assist_app.ankidroid.model.AnkiCardQA
 import com.ly.anki_assist_app.ankidroid.model.AnkiNoteInfo
+import com.ly.anki_assist_app.ankidroid.model.Ease
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.HashMap
@@ -13,6 +15,9 @@ import java.util.HashMap
 class CardApi {
     companion object {
 
+        /**
+         * 异步获取卡片详情
+         */
         suspend fun asynGetDueCards(deckId: Long, numCards: Int): List<AnkiCard> {
             return withContext(Dispatchers.IO) {
                 return@withContext getDueCards(deckId, numCards)
@@ -183,6 +188,30 @@ class CardApi {
             }
 
             return cardTemplateName
+        }
+
+        /**
+         * 异步回答卡片
+         */
+        suspend fun asynAnswerCard(card: AnkiCard, ease: Ease, timeTaken: Long){
+            withContext(Dispatchers.IO) {
+                answerCard(card, ease, timeTaken)
+            }
+        }
+
+        private fun answerCard(card: AnkiCard, ease: Ease, timeTaken: Long){
+            val values = ContentValues()
+            values.put(FlashCardsContract.ReviewInfo.NOTE_ID, card.noteId)
+            values.put(FlashCardsContract.ReviewInfo.CARD_ORD, card.cardOrd)
+            values.put(FlashCardsContract.ReviewInfo.EASE, ease.value)
+            values.put(FlashCardsContract.ReviewInfo.TIME_TAKEN, timeTaken)
+
+            App.context.contentResolver.update(
+                FlashCardsContract.ReviewInfo.CONTENT_URI,
+                values,
+                null,
+                null
+            )
         }
 
     }

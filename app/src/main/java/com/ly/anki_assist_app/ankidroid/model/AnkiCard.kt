@@ -3,7 +3,9 @@ package com.ly.anki_assist_app.ankidroid.model
 import androidx.collection.arrayMapOf
 import androidx.collection.arraySetOf
 import com.ichi2.anki.FlashCardsContract
+import com.ly.anki_assist_app.R
 import org.json.JSONArray
+import java.lang.IllegalArgumentException
 
 data class AnkiCard(
     var noteId: Long = 0,
@@ -44,3 +46,30 @@ data class AnkiNoteInfo(
     var tagSet: HashSet<String> = HashSet<String>(),
     var modelId: Long = 0
 )
+
+enum class Ease(val value: Int, val actionId: Int) {
+    EASE_1(1, R.string.reviewer_action_ease_1),
+    EASE_2(2, R.string.reviewer_action_ease_2),
+    EASE_3(3, R.string.reviewer_action_ease_3),
+    EASE_4(4, R.string.reviewer_action_ease_4);
+
+    companion object {
+        fun fromInt(value: Int): Ease {
+            for (e in values()) {
+                if (e.value == value) {
+                    return e
+                }
+            }
+            throw IllegalArgumentException("Not a valid ease value: $value")
+        }
+
+        fun fromActionId(actionId: Int): Ease {
+            for (e in values()) {
+                if (e.actionId == actionId) {
+                    return e
+                }
+            }
+            throw IllegalArgumentException("Not a valid actionId: $actionId")
+        }
+    }
+}
