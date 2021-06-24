@@ -1,4 +1,4 @@
-package com.ly.anki_assist_app.model
+package com.ly.anki_assist_app.ankidroid.model
 
 import org.json.JSONArray
 
