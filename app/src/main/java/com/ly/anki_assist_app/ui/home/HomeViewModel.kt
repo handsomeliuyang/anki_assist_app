@@ -1,34 +1,55 @@
 package com.ly.anki_assist_app.ui.home
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.ly.anki_assist_app.ankidroid.api.CardApi
+import androidx.lifecycle.*
 import com.ly.anki_assist_app.ankidroid.api.DeckApi
-import kotlinx.coroutines.Dispatchers
+import com.ly.anki_assist_app.ankidroid.model.AnkiDeck
+import com.ly.anki_assist_app.utils.Resource
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+
+enum class CheckStatus {
+    CHECKING,
+    ANKI_UNSTALL,
+    NOT_PERMISSION,
+    SUCCESS
+}
 
 class HomeViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+    private val _checkStatus = MutableLiveData<CheckStatus>().apply {
+        value = CheckStatus.CHECKING
     }
-    val text: LiveData<String> = _text
+    val checkStatus: LiveData<CheckStatus> = _checkStatus
 
-    fun loadDecks() {
-        viewModelScope.launch {
-            // 加载所有到期的类别
-            val dueDeckList = DeckApi.asynGetDueDeckList()
-            Log.d("liuyang", "all due deck list: ${dueDeckList}")
+    fun updateCheckStatus(status: CheckStatus){
+        _checkStatus.value = status
+    }
 
-            // 获取每个Deck下的到期的Card
-            for (deck in dueDeckList) {
-                val dueCards = CardApi.asynGetDueCards(deck.deckId, 20)
-
-                Log.d("liuyang", "${deck}=${dueCards}")
+    val dueOverview = _checkStatus.switchMap {
+        liveData {
+            if(it == CheckStatus.SUCCESS) {
+                val result = try {
+                    val dueDeckList = DeckApi.asynGetDueDeckList()
+                    var reviewNumbs = 0
+                    var newNumbs = 0
+                    for (dueDeck in dueDeckList) {
+                        reviewNumbs += dueDeck.deckDueCounts.learnCount + dueDeck.deckDueCounts.reviewCount
+                        newNumbs += dueDeck.deckDueCounts.newCount
+                    }
+                    Resource.success(Overview(dueDeckList, reviewNumbs, newNumbs))
+                } catch (e: Exception) {
+                    Resource.error("加载出错", null)
+                }
+                emit(result)
+            } else {
+                emit(Resource.error("check 失败", null))
             }
         }
     }
 }
+
+data class Overview(
+    val dueDeckList: List<AnkiDeck>,
+    val reviewNums: Int,
+    val newNums: Int,
+)

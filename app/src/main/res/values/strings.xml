@@ -25,7 +25,7 @@
 
     <string name="home_card_overview_title">今日概览</string>
     <string name="home_card_overview_secondary_text">显示今日复习量和学习量</string>
-    <string name="home_card_overview_supporting_text">复习量：5张，已复习123张，待复习12张，进度90%</string>
+    <string name="home_card_overview_supporting_text">今日需复习 xx 张，需学习新卡片 xx 张</string>
 
     <string name="home_card_study_title">打印学习</string>
     <string name="home_card_study_secondary_text">打印后，让孩子自主学习，减轻1对1辅导成本</string>
