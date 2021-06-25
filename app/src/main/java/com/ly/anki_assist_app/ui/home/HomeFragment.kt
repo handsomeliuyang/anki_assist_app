@@ -14,6 +14,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.databinding.FragmentHomeBinding
@@ -65,6 +67,10 @@ class HomeFragment : Fragment() {
                 overviewTextView?.text = "今日需复习 ${it.data?.reviewNums} 张，需学习新卡片 ${it.data?.newNums} 张"
             }
         })
+
+        _binding?.printReviewBtn?.setOnClickListener {
+            it.findNavController().navigate(R.id.action_home_to_print)
+        }
 
         val retryBtn = binding.retry
         retryBtn.setOnClickListener {

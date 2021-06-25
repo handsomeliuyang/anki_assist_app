@@ -9,7 +9,19 @@
         android:id="@+id/nav_home"
         android:name="com.ly.anki_assist_app.ui.home.HomeFragment"
         android:label="@string/home_title"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_home_to_print"
+            app:destination="@+id/nav_print"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_print"
+        android:name="com.ly.anki_assist_app.ui.print.PrintFragment"
+        android:label="卡片打印学习"
+        tools:layout="@layout/print_fragment">
+    </fragment>
+
 
     <fragment
         android:id="@+id/nav_gallery"
@@ -22,4 +34,7 @@
         android:name="com.ly.anki_assist_app.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+
+
+
 </navigation>
