@@ -1,0 +1,23 @@
+.print_table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  table-layout:fixed;
+  word-break:break-all;
+}
+
+.print_td, .print_th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.print_tr:nth-child(even) {
+  background-color: #F5F5F5;
+}
+
+/*
+.answer_td {
+    visibility: hidden;
+}
+*/

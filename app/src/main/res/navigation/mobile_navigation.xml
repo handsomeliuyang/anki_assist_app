@@ -9,7 +9,7 @@
         android:id="@+id/nav_home"
         android:name="com.ly.anki_assist_app.ui.home.HomeFragment"
         android:label="@string/home_title"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_home_to_print"
             app:destination="@+id/nav_print"/>

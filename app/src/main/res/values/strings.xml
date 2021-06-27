@@ -42,4 +42,7 @@
     <string name="home_card_coach_review_btn">错误的复习卡片</string>
     <string name="home_card_coach_new_btn">错误的新卡片</string>
 
+    <!--打印页的配置-->
+    <string name="action_print">打印</string>
+
 </resources>
