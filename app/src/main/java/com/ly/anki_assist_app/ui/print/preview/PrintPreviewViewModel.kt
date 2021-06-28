@@ -13,7 +13,7 @@ import java.lang.Exception
 class PrintPreviewViewModel : ViewModel() {
 
     val dueCardsString = liveData<Resource<String>> {
-        emit(Resource.loading(null))
+        emit(Resource.loading("加载中...", null))
 
         try {
             val ankiCardList = arrayListOf<AnkiCard>()

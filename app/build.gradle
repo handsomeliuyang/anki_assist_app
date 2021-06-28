@@ -33,6 +33,10 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    dataBinding {
+        enabled true
+    }
 }
 
 dependencies {
@@ -58,4 +62,7 @@ dependencies {
 
     // Log日志
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // 展开RecyclerView
+    implementation 'com.bignerdranch.android:expandablerecyclerview:3.0.0-RC1'
 }
