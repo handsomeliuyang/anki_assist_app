@@ -6,10 +6,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.print.PrintFragment">
+    tools:context=".ui.print.preview.PrintPreviewFragment">
 
 
-    <com.ly.anki_assist_app.ui.print.MyWebView
+    <com.ly.anki_assist_app.ui.print.preview.MyWebView
         android:id="@+id/webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

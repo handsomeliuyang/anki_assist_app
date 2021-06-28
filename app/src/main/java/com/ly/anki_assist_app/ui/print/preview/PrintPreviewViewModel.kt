@@ -1,4 +1,4 @@
-package com.ly.anki_assist_app.ui.print
+package com.ly.anki_assist_app.ui.print.preview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
@@ -10,7 +10,7 @@ import com.ly.anki_assist_app.utils.Resource
 import kotlinx.coroutines.delay
 import java.lang.Exception
 
-class PrintViewModel : ViewModel() {
+class PrintPreviewViewModel : ViewModel() {
 
     val dueCardsString = liveData<Resource<String>> {
         emit(Resource.loading(null))

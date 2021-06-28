@@ -1,4 +1,4 @@
-package com.ly.anki_assist_app.ui.print
+package com.ly.anki_assist_app.ui.print.preview
 
 import android.content.Context
 import android.graphics.Color
@@ -10,19 +10,17 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ly.anki_assist_app.R
-import com.ly.anki_assist_app.ankidroid.model.AnkiCard
-import com.ly.anki_assist_app.databinding.PrintFragmentBinding
+import com.ly.anki_assist_app.databinding.PrintPreviewFragmentBinding
 import com.ly.anki_assist_app.utils.Status
-import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
 const val BASE_URL = "file:///storage/emulated/0/__viewer__.html"
 
-class PrintFragment : Fragment() {
+class PrintPreviewFragment : Fragment() {
 
-    private lateinit var viewModel: PrintViewModel
-    private var _binding: PrintFragmentBinding? = null
+    private lateinit var viewModel: PrintPreviewViewModel
+    private var _binding: PrintPreviewFragmentBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -35,9 +33,9 @@ class PrintFragment : Fragment() {
     ): View? {
         setHasOptionsMenu(true)
 
-        viewModel = ViewModelProvider(this).get(PrintViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(PrintPreviewViewModel::class.java)
 
-        _binding = PrintFragmentBinding.inflate(inflater, container, false)
+        _binding = PrintPreviewFragmentBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         initWebView(binding.webview)
@@ -57,7 +55,7 @@ class PrintFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         menu.clear()
-        inflater.inflate(R.menu.print, menu)
+        inflater.inflate(R.menu.print_preview, menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

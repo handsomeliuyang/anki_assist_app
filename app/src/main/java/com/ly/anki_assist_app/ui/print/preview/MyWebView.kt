@@ -1,4 +1,4 @@
-package com.ly.anki_assist_app.ui.print
+package com.ly.anki_assist_app.ui.print.preview
 
 import android.content.Context
 import android.util.AttributeSet
