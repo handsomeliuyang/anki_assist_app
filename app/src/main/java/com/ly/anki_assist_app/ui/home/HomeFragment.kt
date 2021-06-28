@@ -69,7 +69,7 @@ class HomeFragment : Fragment() {
         })
 
         _binding?.printReviewBtn?.setOnClickListener {
-            it.findNavController().navigate(R.id.action_home_to_print)
+            it.findNavController().navigate(R.id.action_home_to_print_options)
         }
 
         val retryBtn = binding.retry

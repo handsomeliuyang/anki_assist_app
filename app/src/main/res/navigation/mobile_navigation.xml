@@ -11,14 +11,24 @@
         android:label="@string/home_title"
         tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_home_to_print"
-            app:destination="@+id/nav_print"/>
+            android:id="@+id/action_home_to_print_options"
+            app:destination="@+id/nav_print_options"/>
     </fragment>
 
     <fragment
-        android:id="@+id/nav_print"
+        android:id="@+id/nav_print_options"
+        android:name="com.ly.anki_assist_app.ui.print.options.PrintOptionsFragment"
+        android:label="打印选项"
+        tools:layout="@layout/fragment_print_options">
+        <action
+            android:id="@+id/action_print_options_to_print_preview"
+            app:destination="@+id/nav_print_preview"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_print_preview"
         android:name="com.ly.anki_assist_app.ui.print.preview.PrintPreviewFragment"
-        android:label="卡片打印学习"
+        android:label="打印预览"
         tools:layout="@layout/print_preview_fragment">
     </fragment>
 
