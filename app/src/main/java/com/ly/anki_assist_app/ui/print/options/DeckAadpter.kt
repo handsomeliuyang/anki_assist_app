@@ -18,6 +18,8 @@ import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.ankidroid.model.AnkiDeck
 import com.ly.anki_assist_app.ankidroid.model.DeckDueCounts
 import com.ly.anki_assist_app.databinding.ItemDeckBinding
+import timber.log.Timber
+import java.util.*
 
 class DeckAadpter(context: Context) :
     ExpandableRecyclerAdapter<DeckParent, DeckChild, DeckParentViewHolder, DeckChildViewHolder>(
@@ -109,7 +111,6 @@ class DeckChild(val deck: AnkiDeck, var checked: Boolean){
 class DeckParentViewHolder(val adpter: DeckAadpter, val expandImage: Drawable, val collapseImage: Drawable, val binding: ItemDeckBinding) :
     ParentViewHolder<DeckParent, DeckChild>(binding.root) {
     fun bind(deckParent: DeckParent, parentPosition: Int) {
-
         binding.checked = deckParent.checked
         binding.deck = deckParent.deck
         binding.dueCounts = deckParent.getDueCounts()
@@ -129,11 +130,13 @@ class DeckParentViewHolder(val adpter: DeckAadpter, val expandImage: Drawable, v
         binding.deckpickerExpander.setImageDrawable(collapseImage)
 
         binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
-            deckParent.checked = isChecked
-            deckParent.children.map {
-                it.checked = isChecked
+            if (buttonView.isPressed) { // 只处理点击后的状态改变
+                deckParent.checked = isChecked
+                deckParent.children.map {
+                    it.checked = isChecked
+                }
+                adpter.notifyChildRangeChanged(parentPosition, 0, deckParent.children.size)
             }
-            adpter.notifyChildRangeChanged(parentPosition, 0, deckParent.children.size)
         }
     }
 
@@ -153,7 +156,9 @@ class DeckChildViewHolder(val binding: ItemDeckBinding) :
         binding.deckpickerExpander.visibility = View.INVISIBLE
 
         binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
-            deckChild.checked = isChecked
+            if (buttonView.isPressed) { // 只处理点击后的状态改变
+                deckChild.checked = isChecked
+            }
         }
     }
 }

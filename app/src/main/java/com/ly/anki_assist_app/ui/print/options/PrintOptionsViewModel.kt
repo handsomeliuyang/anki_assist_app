@@ -14,7 +14,6 @@ class PrintOptionsViewModel : ViewModel() {
     val items: LiveData<Resource<List<DeckParent>>> = liveData {
         emit(Resource.loading("加载中...", null))
         try {
-            kotlinx.coroutines.delay(3000)
             val dueDeckList = DeckApi.asynGetDueDeckList()
 
             val deckParentList = mutableListOf<DeckParent>()
