@@ -19,25 +19,23 @@ class PrintOptionsViewModel : ViewModel() {
 
             val deckParentList = mutableListOf<DeckParent>()
             val parentMap = mutableMapOf<String, DeckParent>()
-            val childMap = mutableMapOf<String, MutableList<AnkiDeck>>()
 
-            for (dueDeck in dueDeckList) {
-                val dirs = dueDeck.deckName.split("::")
-                if(dirs.size == 1) {
-                    val deckParent = DeckParent(dueDeck, mutableListOf<AnkiDeck>())
+            // 先创建一级目录
+            dueDeckList
+                .filter { !it.isSubDeck }
+                .map {
+                    val deckParent = DeckParent(it, mutableListOf<AnkiDeck>())
                     deckParentList.add(deckParent)
-                    parentMap.put(dirs[0], deckParent)
-                } else {
-                    val list = childMap.get(dirs[0]) ?: mutableListOf<AnkiDeck>()
-                    list.add(dueDeck)
-                    childMap.put(dirs[0], list)
+                    parentMap.put(it.name, deckParent)
                 }
-            }
 
-            for ((key, value) in childMap.entries) {
-                val deckParent = parentMap.get(key) ?: continue
-                deckParent.children.addAll(value)
-            }
+            // 归类二级目录
+            dueDeckList
+                .filter { it.isSubDeck }
+                .map {
+                    val deckParent = parentMap.get(it.rootDir)
+                    deckParent?.children?.add(it)
+                }
 
             emit(Resource.success(deckParentList))
         } catch (e: Exception) {

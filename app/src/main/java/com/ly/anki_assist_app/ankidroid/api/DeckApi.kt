@@ -35,21 +35,19 @@ class DeckApi {
                     do {
                         val deckId = it.getLong(it.getColumnIndex(FlashCardsContract.Deck.DECK_ID))
                         val deckName = it.getString(it.getColumnIndex(FlashCardsContract.Deck.DECK_NAME))
-
                         val deckCounts = it.getString(it.getColumnIndex(FlashCardsContract.Deck.DECK_COUNTS))
-                        val deckDueCounts = AnkiDeck.parseDeckCounts(deckCounts)
 
                         // 过滤掉 Default 类别
                         if (deckName == "Default") {
                             continue
                         }
 
-                        // 过滤掉没有需要复用的类别
-                        if (deckDueCounts.getTotal() == 0) {
+                        val ankiDeck = AnkiDeck.fromString(deckId, deckName, deckCounts)
+                        // 过滤掉无复习的类别
+                        if(ankiDeck.deckDueCounts.getTotal() <= 0){
                             continue
                         }
-
-                        deckList.add(AnkiDeck(deckId, deckName, deckDueCounts))
+                        deckList.add(ankiDeck)
                     } while (it.moveToNext())
                 }
 

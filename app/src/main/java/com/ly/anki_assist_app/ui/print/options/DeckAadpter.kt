@@ -16,6 +16,7 @@ import com.bignerdranch.expandablerecyclerview.ParentViewHolder
 import com.bignerdranch.expandablerecyclerview.model.Parent
 import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.ankidroid.model.AnkiDeck
+import com.ly.anki_assist_app.ankidroid.model.DeckDueCounts
 import com.ly.anki_assist_app.databinding.ItemDeckBinding
 
 class DeckAadpter(context: Context) :
@@ -75,12 +76,21 @@ class DeckAadpter(context: Context) :
         childPosition: Int,
         child: AnkiDeck
     ) {
-        childViewHolder.bind(child)
+        childViewHolder.bind(parentList.get(parentPosition), child)
     }
 
 }
 
 class DeckParent(val deck: AnkiDeck, val children: MutableList<AnkiDeck>) : Parent<AnkiDeck> {
+
+    fun getDueCounts(): DeckDueCounts {
+        val dueCounts = DeckDueCounts(0, 0, 0)
+        dueCounts.add(deck.deckDueCounts)
+        children.map {
+            dueCounts.add(it.deckDueCounts)
+        }
+        return dueCounts
+    }
 
     override fun getChildList(): MutableList<AnkiDeck> {
         return children
@@ -97,6 +107,7 @@ class DeckParentViewHolder(val expandImage: Drawable, val collapseImage: Drawabl
     fun bind(deckParent: DeckParent) {
 
         binding.deck = deckParent.deck
+        binding.dueCounts = deckParent.getDueCounts()
 
         if (deckParent.children.isEmpty()) {
             binding.deckpickerExpander.visibility = View.INVISIBLE
@@ -122,8 +133,9 @@ class DeckParentViewHolder(val expandImage: Drawable, val collapseImage: Drawabl
 
 class DeckChildViewHolder(val binding: ItemDeckBinding) :
     ChildViewHolder<AnkiDeck>(binding.root) {
-    fun bind(deck: AnkiDeck) {
+    fun bind(deckParent: DeckParent, deck: AnkiDeck) {
         binding.deck = deck
+        binding.dueCounts = deck.deckDueCounts
         binding.deckpickerExpander.visibility = View.INVISIBLE
     }
 }
