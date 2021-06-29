@@ -20,7 +20,7 @@ import com.ly.anki_assist_app.ankidroid.model.DeckDueCounts
 import com.ly.anki_assist_app.databinding.ItemDeckBinding
 
 class DeckAadpter(context: Context) :
-    ExpandableRecyclerAdapter<DeckParent, AnkiDeck, DeckParentViewHolder, DeckChildViewHolder>(
+    ExpandableRecyclerAdapter<DeckParent, DeckChild, DeckParentViewHolder, DeckChildViewHolder>(
         emptyList()
     ) {
 
@@ -38,7 +38,7 @@ class DeckAadpter(context: Context) :
         viewType: Int
     ): DeckParentViewHolder {
         return DeckParentViewHolder(
-            mExpandImage, mCollapseImage,
+            this, mExpandImage, mCollapseImage,
             ItemDeckBinding.inflate(
                 LayoutInflater.from(
                     parentViewGroup.context
@@ -67,32 +67,32 @@ class DeckAadpter(context: Context) :
         parentPosition: Int,
         parent: DeckParent
     ) {
-        parentViewHolder.bind(parent)
+        parentViewHolder.bind(parent, parentPosition)
     }
 
     override fun onBindChildViewHolder(
         childViewHolder: DeckChildViewHolder,
         parentPosition: Int,
         childPosition: Int,
-        child: AnkiDeck
+        child: DeckChild
     ) {
         childViewHolder.bind(parentList.get(parentPosition), child)
     }
 
 }
 
-class DeckParent(val deck: AnkiDeck, val children: MutableList<AnkiDeck>) : Parent<AnkiDeck> {
+class DeckParent(val deck: AnkiDeck, var checked: Boolean = false, val children: MutableList<DeckChild>) : Parent<DeckChild> {
 
     fun getDueCounts(): DeckDueCounts {
         val dueCounts = DeckDueCounts(0, 0, 0)
         dueCounts.add(deck.deckDueCounts)
         children.map {
-            dueCounts.add(it.deckDueCounts)
+            dueCounts.add(it.deck.deckDueCounts)
         }
         return dueCounts
     }
 
-    override fun getChildList(): MutableList<AnkiDeck> {
+    override fun getChildList(): MutableList<DeckChild> {
         return children
     }
 
@@ -102,10 +102,15 @@ class DeckParent(val deck: AnkiDeck, val children: MutableList<AnkiDeck>) : Pare
 
 }
 
-class DeckParentViewHolder(val expandImage: Drawable, val collapseImage: Drawable, val binding: ItemDeckBinding) :
-    ParentViewHolder<DeckParent, AnkiDeck>(binding.root) {
-    fun bind(deckParent: DeckParent) {
+class DeckChild(val deck: AnkiDeck, var checked: Boolean){
 
+}
+
+class DeckParentViewHolder(val adpter: DeckAadpter, val expandImage: Drawable, val collapseImage: Drawable, val binding: ItemDeckBinding) :
+    ParentViewHolder<DeckParent, DeckChild>(binding.root) {
+    fun bind(deckParent: DeckParent, parentPosition: Int) {
+
+        binding.checked = deckParent.checked
         binding.deck = deckParent.deck
         binding.dueCounts = deckParent.getDueCounts()
 
@@ -122,6 +127,14 @@ class DeckParentViewHolder(val expandImage: Drawable, val collapseImage: Drawabl
             }
         }
         binding.deckpickerExpander.setImageDrawable(collapseImage)
+
+        binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+            deckParent.checked = isChecked
+            deckParent.children.map {
+                it.checked = isChecked
+            }
+            adpter.notifyChildRangeChanged(parentPosition, 0, deckParent.children.size)
+        }
     }
 
     override fun onExpansionToggled(expanded: Boolean) {
@@ -132,10 +145,15 @@ class DeckParentViewHolder(val expandImage: Drawable, val collapseImage: Drawabl
 }
 
 class DeckChildViewHolder(val binding: ItemDeckBinding) :
-    ChildViewHolder<AnkiDeck>(binding.root) {
-    fun bind(deckParent: DeckParent, deck: AnkiDeck) {
-        binding.deck = deck
-        binding.dueCounts = deck.deckDueCounts
+    ChildViewHolder<DeckChild>(binding.root) {
+    fun bind(deckParent: DeckParent, deckChild: DeckChild) {
+        binding.checked = deckChild.checked
+        binding.deck = deckChild.deck
+        binding.dueCounts = deckChild.deck.deckDueCounts
         binding.deckpickerExpander.visibility = View.INVISIBLE
+
+        binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+            deckChild.checked = isChecked
+        }
     }
 }

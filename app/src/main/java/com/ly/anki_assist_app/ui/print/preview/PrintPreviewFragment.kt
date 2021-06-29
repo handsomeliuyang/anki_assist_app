@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 const val BASE_URL = "file:///storage/emulated/0/__viewer__.html"
+const val ARGUMENT_PRINT_DECKID_ARRAY = "print_deckid_array"
 
 class PrintPreviewFragment : Fragment() {
 
@@ -48,9 +49,12 @@ class PrintPreviewFragment : Fragment() {
             }
         })
 
+        // 获取参数
+        val array = arguments?.getLongArray(ARGUMENT_PRINT_DECKID_ARRAY)?.toTypedArray() ?: emptyArray()
+        viewModel.setPrintList(array)
+
         return root
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)

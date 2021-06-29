@@ -24,7 +24,7 @@ class PrintOptionsViewModel : ViewModel() {
             dueDeckList
                 .filter { !it.isSubDeck }
                 .map {
-                    val deckParent = DeckParent(it, mutableListOf<AnkiDeck>())
+                    val deckParent = DeckParent(it, true, mutableListOf<DeckChild>())
                     deckParentList.add(deckParent)
                     parentMap.put(it.name, deckParent)
                 }
@@ -34,7 +34,7 @@ class PrintOptionsViewModel : ViewModel() {
                 .filter { it.isSubDeck }
                 .map {
                     val deckParent = parentMap.get(it.rootDir)
-                    deckParent?.children?.add(it)
+                    deckParent?.children?.add(DeckChild(it, true))
                 }
 
             emit(Resource.success(deckParentList))

@@ -5,6 +5,9 @@
 
     <data>
         <variable
+            name="checked"
+            type="Boolean" />
+        <variable
             name="deck"
             type="com.ly.anki_assist_app.ankidroid.model.AnkiDeck" />
         <variable
@@ -55,6 +58,7 @@
             android:paddingStart="5dip"
             android:paddingEnd="5dip"
             android:textSize="12sp"
+            android:textColor="@{dueCounts.newCount > 0 ? @color/new_count : @color/zero_count}"
             tools:text="10"
             android:text="@{Integer.toString(dueCounts.newCount)}"
             app:layout_constraintTop_toTopOf="parent"
@@ -70,6 +74,7 @@
             android:gravity="center"
             android:paddingEnd="5dip"
             android:textSize="12sp"
+            android:textColor="@{dueCounts.learnCount > 0 ? @color/learn_count : @color/zero_count}"
             tools:text="42"
             android:text="@{Integer.toString(dueCounts.learnCount)}"
             app:layout_constraintTop_toTopOf="parent"
@@ -84,11 +89,22 @@
             android:background="@android:color/transparent"
             android:gravity="center"
             android:textSize="12sp"
+            android:textColor="@{dueCounts.reviewCount > 0 ? @color/review_count : @color/zero_count}"
             tools:text="13"
             android:text="@{Integer.toString(dueCounts.reviewCount)}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toRightOf="@id/deckpicker_lrn" />
+
+        <CheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="@{checked}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
