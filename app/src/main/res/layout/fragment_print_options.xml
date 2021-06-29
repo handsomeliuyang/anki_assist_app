@@ -2,6 +2,7 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:binding="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
 
@@ -23,6 +24,7 @@
             android:layout_height="match_parent"
             android:id="@+id/recycler_view"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            binding:items="@{viewmodel.items.data}"
             android:visibility="@{viewmodel.items.status == Status.SUCCESS ? View.VISIBLE : View.GONE}"/>
 
         <TextView

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="deck"
+            type="com.ly.anki_assist_app.ankidroid.model.AnkiDeck" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:background="@android:color/holo_orange_light">
+
+        <ImageButton
+            android:id="@+id/deckpicker_expander"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:padding="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+        <TextView
+            android:id="@+id/deckpicker_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:background="@android:color/transparent"
+            android:gravity="left|center_vertical"
+            android:maxLines="2"
+            android:textColor="?android:textColorPrimary"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:text="@{deck.deckName}"
+            tools:text="Deck name"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/deckpicker_expander" />
+
+        <TextView
+            android:id="@+id/deckpicker_new"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:paddingStart="5dip"
+            android:paddingEnd="5dip"
+            android:textSize="14sp"
+            tools:text="10"
+            android:text="@{Integer.toString(deck.deckDueCounts.newCount)}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/deckpicker_name" />
+
+        <TextView
+            android:id="@+id/deckpicker_lrn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:paddingEnd="5dip"
+            android:textSize="14sp"
+            tools:text="42"
+            android:text="@{Integer.toString(deck.deckDueCounts.learnCount)}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/deckpicker_new" />
+
+        <TextView
+            android:id="@+id/deckpicker_rev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:textSize="14sp"
+            tools:text="13"
+            android:text="@{Integer.toString(deck.deckDueCounts.reviewCount)}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/deckpicker_lrn" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

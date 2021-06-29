@@ -28,14 +28,11 @@ class PrintOptionsFragment : Fragment() {
             viewmodel = viewModel
             lifecycleOwner = this@PrintOptionsFragment.viewLifecycleOwner
         }
+
+        binding.recyclerView.adapter = DeckAadpter(this.requireContext())
+
         return binding.root
     }
-
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//        // View创建后，再设置lifecycle，才会开始监听LiveData
-//        binding.lifecycleOwner = this.viewLifecycleOwner
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
