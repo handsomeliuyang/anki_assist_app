@@ -24,16 +24,21 @@ class PrintPreviewViewModel : ViewModel() {
         liveData<Resource<String>> {
             emit(Resource.loading("加载中...", null))
 
-//            try {
-//                val ankiCardList = arrayListOf<AnkiCard>()
+            try {
+                val ankiCardList = arrayListOf<AnkiCard>()
+
+                printArray.map { deckId ->
+                    ankiCardList.addAll(CardApi.asynGetDueCards(deckId, 20))
+                }
+
 //                val dueDeckList = DeckApi.asynGetDueDeckList()
 //                for (deck in dueDeckList) {
 //                    ankiCardList.addAll(CardApi.asynGetDueCards(deck.deckId, 100))
 //                }
-//                emit(Resource.success(CardAppearance.displayString(ankiCardList)))
-//            } catch (e: Exception) {
-//                emit(Resource.error("Cards Loading Error", null))
-//            }
+                emit(Resource.success(CardAppearance.displayString(ankiCardList)))
+            } catch (e: Exception) {
+                emit(Resource.error("Cards Loading Error", null))
+            }
 
         }
     }
