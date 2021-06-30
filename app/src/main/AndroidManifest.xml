@@ -17,6 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Anki_assist_app"
+        android:requestLegacyExternalStorage="true"
+        android:largeHeap="true"
         android:name=".App">
         <activity
             android:name=".MainActivity"

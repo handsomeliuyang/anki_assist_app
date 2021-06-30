@@ -10,6 +10,7 @@ import com.ly.anki_assist_app.ankidroid.model.AnkiNoteInfo
 import com.ly.anki_assist_app.ankidroid.model.Ease
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.HashMap
 
 class CardApi {
@@ -45,6 +46,8 @@ class CardApi {
                         val nextReviewTimes = it.getString(it.getColumnIndex(FlashCardsContract.ReviewInfo.NEXT_REVIEW_TIMES))
 
                         val mediaFiles = it.getString(it.getColumnIndex(FlashCardsContract.ReviewInfo.MEDIA_FILES))
+
+                        Timber.d("mediaFiles=%s", mediaFiles)
 
                         val card = retrieveCard(noteId, cardOrd)
                         card.setReviewData(buttonCount, nextReviewTimes)

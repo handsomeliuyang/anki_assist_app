@@ -4,14 +4,18 @@ import android.content.Context
 import android.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.os.Environment
 import android.print.PrintAttributes
 import android.print.PrintManager
 import android.view.*
+import androidx.core.os.EnvironmentCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ly.anki_assist_app.R
+import com.ly.anki_assist_app.ankidroid.api.AnkiAppApi
 import com.ly.anki_assist_app.databinding.PrintPreviewFragmentBinding
 import com.ly.anki_assist_app.utils.Status
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -20,6 +24,7 @@ const val ARGUMENT_PRINT_DECKID_ARRAY = "print_deckid_array"
 
 class PrintPreviewFragment : Fragment() {
 
+    private val BASE_URL = AnkiAppApi.getAnkiMediaUri()
     private lateinit var viewModel: PrintPreviewViewModel
     private var _binding: PrintPreviewFragmentBinding? = null
 
@@ -81,6 +86,8 @@ class PrintPreviewFragment : Fragment() {
     private fun displayCardQuestion(displayString: String) {
         _binding?.webview?.visibility = View.VISIBLE
         _binding?.messageTitle?.visibility = View.GONE
+
+        Timber.d("webview load url = %s", BASE_URL)
 
         // 显示所有卡片的问题
         _binding?.webview?.loadDataWithBaseURL(

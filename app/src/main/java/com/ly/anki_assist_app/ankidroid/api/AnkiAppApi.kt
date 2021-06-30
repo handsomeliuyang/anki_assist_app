@@ -1,8 +1,11 @@
 package com.ly.anki_assist_app.ankidroid.api
 
 import android.content.Intent
+import android.net.Uri
+import android.os.Environment
 import com.ichi2.anki.api.AddContentApi
 import com.ly.anki_assist_app.App
+import java.io.File
 
 const val ANKI_PACKAGE_NAME = "com.ichi2.anki"
 
@@ -19,6 +22,15 @@ class AnkiAppApi {
             intent.addCategory(Intent.CATEGORY_LAUNCHER)
             App.context.startActivity(intent)
             return true
+        }
+
+        fun getAnkiMediaUri(): String {
+            val mediaDir = File(
+                File(Environment.getExternalStorageDirectory(), "AnkiDroid"),
+                "collection.media"
+            )
+            val mediaDirUri = Uri.fromFile(mediaDir)
+            return "$mediaDirUri/"
         }
     }
 }
