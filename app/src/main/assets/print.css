@@ -12,10 +12,12 @@
   padding: 8px;
 }
 
+/*
 td img{
     display: block;
     width: 100%;
 }
+*/
 
 .print_tr:nth-child(even) {
   background-color: #EEEEEE;

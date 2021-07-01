@@ -48,4 +48,11 @@ class CardViewerWebClient : WebViewClient() {
     private fun filterUrl(url: String): Boolean {
         return false
     }
+
+    override fun onPageFinished(view: WebView?, url: String?) {
+        Timber.d("onPageFinished triggered");
+//        drawFlag();
+//        drawMark();
+        view?.loadUrl("javascript:onPageFinished();");
+    }
 }
