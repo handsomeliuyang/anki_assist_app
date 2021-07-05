@@ -27,10 +27,17 @@ class CardAppearance {
         }
 
         private fun printCard(index: Int, total: Int, question: String, answer: String): String {
-            return " <tr class=\"print_tr\">" +
+//            return " <tr class=\"print_tr\">" +
+//                        "<td class=\"print_td\">${index+1}/${total}</td>" +
+//                        "<td class=\"print_td\">${question}</td>" +
+//                        "<td class=\"print_td\"><div class=\"answer_td\">${answer}</div></td>" +
+//                    "</tr>"
+            return "<tr class=\"print_tr\">" +
                         "<td class=\"print_td\">${index+1}/${total}</td>" +
-                        "<td class=\"print_td\">${question}</td>" +
-                        "<td class=\"print_td\"><div class=\"answer_td\">${answer}</div></td>" +
+                        "<td class=\"print_td\">" +
+                            question +
+                            "<div style=\"height: 70px;\"></div>" +
+                        "</td>" +
                     "</tr>"
         }
 
