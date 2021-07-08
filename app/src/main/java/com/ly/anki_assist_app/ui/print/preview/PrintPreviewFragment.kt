@@ -75,8 +75,12 @@ class PrintPreviewFragment : Fragment() {
     }
 
     private fun printWebView(): Boolean {
-        val webView = _binding?.webview ?: return true
         val jobName = "print_due_cards_${SimpleDateFormat("yyyy-MM-dd").format(Date())}"
+
+        viewModel.savePrintdata(jobName)
+
+        val webView = _binding?.webview ?: return true
+
         val printManager = this.activity?.getSystemService(Context.PRINT_SERVICE) as PrintManager? ?: return true
         val printAdapter = webView.createPrintDocumentAdapter(jobName)
         printManager.print(jobName, printAdapter, PrintAttributes.Builder().build())

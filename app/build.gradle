@@ -28,15 +28,15 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    packagingOptions {
+        exclude 'META-INF/atomicfu.kotlin_module'
+    }
     kotlinOptions {
         jvmTarget = '1.8'
     }
     buildFeatures {
         viewBinding true
-    }
-
-    dataBinding {
-        enabled true
+        dataBinding true
     }
 }
 
@@ -66,4 +66,15 @@ dependencies {
 
     // 展开RecyclerView
     implementation 'com.bignerdranch.android:expandablerecyclerview:3.0.0-RC1'
+
+    // room
+    def roomVersion = "2.3.0"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
+    kapt("androidx.room:room-compiler:$roomVersion")
+    // 解决room 在m1上的问题
+    kapt "org.xerial:sqlite-jdbc:3.34.0"
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.8.7'
 }
