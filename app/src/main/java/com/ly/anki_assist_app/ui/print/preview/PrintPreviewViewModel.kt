@@ -5,7 +5,6 @@ import com.ly.anki_assist_app.ankidroid.api.CardApi
 import com.ly.anki_assist_app.ankidroid.model.AnkiCard
 import com.ly.anki_assist_app.ankidroid.ui.CardAppearance
 import com.ly.anki_assist_app.printroom.CardIdAndState
-import com.ly.anki_assist_app.printroom.PRINT_STATE_NONE_CHECK
 import com.ly.anki_assist_app.printroom.PrintEntity
 import com.ly.anki_assist_app.printroom.PrintUtils
 //import com.ly.anki_assist_app.room.PrintEntity
@@ -75,10 +74,10 @@ class PrintPreviewViewModel : ViewModel() {
                 }
 
                 val printEntity = PrintEntity(
+                    id = 0,
                     name = printName,
                     time = Date(),
-                    state = PRINT_STATE_NONE_CHECK,
-                    category = "类别",
+                    state = PrintEntity.STATE_NONE_CHECK,
                     reviewCount = ankiCardList.size,
                     cardIdAndStateList = list
                 )
@@ -87,5 +86,4 @@ class PrintPreviewViewModel : ViewModel() {
             }
         }
     }
-
 }

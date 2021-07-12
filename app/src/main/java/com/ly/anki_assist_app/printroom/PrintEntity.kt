@@ -5,19 +5,32 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
 
-const val PRINT_STATE_NONE_CHECK = 1
-
 @Entity(tableName = "print_table")
 data class PrintEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Int,
     val name: String,
     val time: Date?,
     val state: Int?,
-    val category: String?,
     val reviewCount: Int?,
     val cardIdAndStateList: List<CardIdAndState>
-)
+) {
+
+    companion object {
+        const val STATE_NONE_CHECK = 1
+        const val STATE_NONE_COACH = 2
+        const val STATE_FINISHED = 3
+    }
+
+    fun getStateText(): String{
+        return when(state) {
+            STATE_NONE_CHECK -> "未检查"
+            STATE_NONE_COACH -> "未辅导"
+            STATE_FINISHED -> "完成"
+            else -> "异常"
+        }
+    }
+}
 
 data class CardIdAndState(
     val noteId: Long,

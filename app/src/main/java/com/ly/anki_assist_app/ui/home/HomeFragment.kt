@@ -16,9 +16,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.android.material.snackbar.Snackbar
 import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.databinding.FragmentHomeBinding
+import com.ly.anki_assist_app.databinding.FragmentPrintOptionsBinding
 import com.ly.anki_assist_app.utils.Status
 import com.ly.anki_assist_app.utils.Utils
 
@@ -44,33 +46,29 @@ class HomeFragment : Fragment() {
         homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        _binding = FragmentHomeBinding.inflate(inflater, container, false).apply {
+            viewmodel = homeViewModel
+            lifecycleOwner = this@HomeFragment.viewLifecycleOwner
+            recyclerView.adapter = HomeAadpter()
+            // 设置分隔线
+            recyclerView.addItemDecoration(DividerItemDecoration(this@HomeFragment.context, DividerItemDecoration.VERTICAL))
+        }
 
-        homeViewModel.checkStatus.observe(viewLifecycleOwner, Observer {
-            when(it){
-                CheckStatus.ANKI_UNSTALL -> showMessage(
-                    R.string.ankidroid_not_found_title,
-                    R.string.ankidroid_not_found_description
-                )
-                CheckStatus.NOT_PERMISSION -> showMessage(
-                    R.string.missingpermissions_title,
-                    R.string.missingpermissions_description
-                )
-                CheckStatus.SUCCESS -> showContent()
-            }
-        })
-
-        val overviewTextView = _binding?.studyOverview
         homeViewModel.dueOverview.observe(viewLifecycleOwner, Observer {
             if (it.status == Status.SUCCESS) {
-                overviewTextView?.text = "今日需复习 ${it.data?.reviewNums} 张，需学习新卡片 ${it.data?.newNums} 张"
+                it.data?.let { overView ->
+                    (_binding?.recyclerView?.adapter as HomeAadpter?)?.updateOverview(overView)
+                }
             }
         })
 
-        _binding?.printReviewBtn?.setOnClickListener {
-            it.findNavController().navigate(R.id.action_home_to_print_options)
-        }
+        homeViewModel.printList.observe(viewLifecycleOwner, Observer {
+            if (it.status == Status.SUCCESS) {
+                it.data?.let { list ->
+                    (_binding?.recyclerView?.adapter as HomeAadpter?)?.updatePrint(list)
+                }
+            }
+        })
 
         val retryBtn = binding.retry
         retryBtn.setOnClickListener {
@@ -78,7 +76,7 @@ class HomeFragment : Fragment() {
         }
 
         checkAllPermissions()
-        return root
+        return binding.root
     }
 
     /**
@@ -87,29 +85,25 @@ class HomeFragment : Fragment() {
     private fun checkAllPermissions() {
         // check whether ankidroid is installed
         if (!Utils.isAppInstalled(this.context, "com.ichi2.anki")) {
-            homeViewModel.updateCheckStatus(CheckStatus.ANKI_UNSTALL)
+            homeViewModel.updateCheckResult(false, getString(R.string.ankidroid_not_found_title))
             return;
         }
 
         // 判断权限有没有授权
         if(!permissionsGranted()) {
             val activity = this.activity ?: return
-
-            Log.d("HomeFragment", "begin permissionsGranted")
-
             try {
                 this.requestPermissions(
                     arrayOf(ANKI_PERMISSIONS, READ_STORAGE_PERMISSION, INTERNET_PERMISSION),
                     PERMISSION_REQUEST_CODE
                 )
             }catch (e: Throwable) {
-                homeViewModel.updateCheckStatus(CheckStatus.NOT_PERMISSION)
-                Log.e("HomeFragment", "requestPermissions error", e)
+                homeViewModel.updateCheckResult(false, getString(R.string.missingpermissions_title))
             }
             return
         }
 
-        homeViewModel.updateCheckStatus(CheckStatus.SUCCESS)
+        homeViewModel.updateCheckResult(true, "完成")
     }
 
     override fun onRequestPermissionsResult(
@@ -125,14 +119,12 @@ class HomeFragment : Fragment() {
             allPermissionsGranted = allPermissionsGranted && (grantResult == PackageManager.PERMISSION_GRANTED)
         }
 
-        Log.d("HomeFragment", "PermissionsResult ${allPermissionsGranted}")
-
         if(!allPermissionsGranted) {
-            homeViewModel.updateCheckStatus(CheckStatus.NOT_PERMISSION)
+            homeViewModel.updateCheckResult(false, getString(R.string.missingpermissions_title))
             return
         }
 
-        homeViewModel.updateCheckStatus(CheckStatus.SUCCESS)
+        homeViewModel.updateCheckResult(true, "完成")
     }
 
     private fun permissionsGranted(): Boolean {
@@ -144,18 +136,6 @@ class HomeFragment : Fragment() {
             return false
         }
         return true
-    }
-
-    private fun showMessage(titleResource: Int, descriptionResource: Int) {
-        _binding?.message?.visibility = View.VISIBLE
-        _binding?.content?.visibility = View.GONE
-
-        _binding?.messageTitle?.setText(titleResource)
-        _binding?.messageDescription?.setText(descriptionResource)
-    }
-    private fun showContent(){
-        _binding?.message?.visibility = View.GONE
-        _binding?.content?.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {

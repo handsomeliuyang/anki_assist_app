@@ -18,6 +18,19 @@ class PrintUtils {
 
             printDao.insertAll(*printEntitys)
         }
+
+        suspend fun asynGetAllPrint(): List<PrintEntity> {
+            return withContext(Dispatchers.IO) {
+                return@withContext getAllPrint()
+            }
+        }
+
+        private fun getAllPrint(): List<PrintEntity>{
+            val database = PrintRoomDatabase.getDatabase()
+            val printDao = database.printDao()
+
+            return printDao.getAll()
+        }
     }
 
 }

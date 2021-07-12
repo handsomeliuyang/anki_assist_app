@@ -25,22 +25,9 @@
 
     <string name="home_card_overview_title">今日概览</string>
     <string name="home_card_overview_secondary_text">显示今日复习量和学习量</string>
-    <string name="home_card_overview_supporting_text">今日需复习 xx 张，需学习新卡片 xx 张</string>
 
-    <string name="home_card_study_title">打印学习</string>
-    <string name="home_card_study_secondary_text">打印后，让孩子自主学习，减轻1对1辅导成本</string>
-    <string name="home_card_study_review_btn">打印复习卡片</string>
-    <string name="home_card_study_new_btn">打印新卡片</string>
-
-    <string name="home_card_check_title">家长检查</string>
-    <string name="home_card_check_secondary_text">检查复习情况，并更新卡片复习进度</string>
-    <string name="home_card_check_review_btn">检查复习卡片</string>
-    <string name="home_card_check_new_btn">检查新卡片</string>
-
-    <string name="home_card_coach_title">家长辅导</string>
-    <string name="home_card_coach_secondary_text">辅导做错的卡片</string>
-    <string name="home_card_coach_review_btn">错误的复习卡片</string>
-    <string name="home_card_coach_new_btn">错误的新卡片</string>
+    <string name="home_card_check_btn">家长检查</string>
+    <string name="home_card_coach_btn">辅导错题</string>
 
     <!--打印页的配置-->
     <string name="action_print">打印</string>

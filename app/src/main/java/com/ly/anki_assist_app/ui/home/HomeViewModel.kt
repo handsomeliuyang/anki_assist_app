@@ -1,33 +1,30 @@
 package com.ly.anki_assist_app.ui.home
 
+import android.text.Html
+import android.text.Spanned
 import androidx.lifecycle.*
 import com.ly.anki_assist_app.ankidroid.api.DeckApi
 import com.ly.anki_assist_app.ankidroid.model.AnkiDeck
+import com.ly.anki_assist_app.printroom.PrintUtils
 import com.ly.anki_assist_app.utils.Resource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-
-enum class CheckStatus {
-    CHECKING,
-    ANKI_UNSTALL,
-    NOT_PERMISSION,
-    SUCCESS
-}
+import timber.log.Timber
 
 class HomeViewModel : ViewModel() {
+    private val _checkResult = MutableLiveData<Boolean>(false)
+    private val _checkReason = MutableLiveData<String>("检测中...")
+    val checkResult: LiveData<Boolean> = _checkResult
+    val checkReason: LiveData<String> = _checkReason
 
-    private val _checkStatus = MutableLiveData<CheckStatus>().apply {
-        value = CheckStatus.CHECKING
+    fun updateCheckResult(checkResult: Boolean, checkReason: String){
+        _checkResult.value = checkResult
+        _checkReason.value = checkReason
     }
-    val checkStatus: LiveData<CheckStatus> = _checkStatus
 
-    fun updateCheckStatus(status: CheckStatus){
-        _checkStatus.value = status
-    }
-
-    val dueOverview = _checkStatus.switchMap {
+    val dueOverview = _checkResult.switchMap {checkResult ->
         liveData {
-            if(it == CheckStatus.SUCCESS) {
+            if(checkResult) {
                 val result = try {
                     val dueDeckList = DeckApi.asynGetDueDeckList()
                     var reviewNumbs = 0
@@ -46,10 +43,42 @@ class HomeViewModel : ViewModel() {
             }
         }
     }
+
+    val printList = _checkResult.switchMap { checkResult ->
+        liveData {
+            if(checkResult) {
+
+                Timber.d("liuyang printList begin")
+
+                val result = try {
+                    val list = PrintUtils.asynGetAllPrint()
+                    Resource.success(list)
+                } catch (e: Exception) {
+                    Resource.error(e.message ?: "", null)
+                }
+
+                Timber.d("liuyang printList success %s", result)
+
+                emit(result)
+            } else {
+                emit(Resource.error("check 失败", null))
+            }
+        }
+    }
+
 }
 
 data class Overview(
     val dueDeckList: List<AnkiDeck>,
     val reviewNums: Int,
     val newNums: Int,
-)
+) {
+    companion object {
+        fun empty(): Overview{
+            return Overview(emptyList(), 0, 0)
+        }
+    }
+//    fun getDiaplayText(): Spanned {
+//        return Html.fromHtml("今日需复习 <font color='#FF0000'>${reviewNums}</font> 张，需学习新卡片 <font color='#FF0000'>${newNums}</font> 张")
+//    }
+}

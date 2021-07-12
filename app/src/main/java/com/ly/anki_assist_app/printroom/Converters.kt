@@ -2,6 +2,7 @@ package com.ly.anki_assist_app.printroom
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.util.*
 
 class Converters {
@@ -18,7 +19,8 @@ class Converters {
 
     @TypeConverter
     fun stringToList(string: String): List<CardIdAndState> {
-        return Gson().fromJson<List<CardIdAndState>>(string, CardIdAndState::class.java)
+        val itemType = object : TypeToken<List<CardIdAndState>>() {}.type
+        return Gson().fromJson<List<CardIdAndState>>(string, itemType)
     }
 
     @TypeConverter
