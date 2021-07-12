@@ -28,6 +28,7 @@ const val ANKI_PERMISSIONS = "com.ichi2.anki.permission.READ_WRITE_DATABASE"
 const val READ_STORAGE_PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE
 const val INTERNET_PERMISSION = Manifest.permission.INTERNET
 const val PERMISSION_REQUEST_CODE = 1023
+const val ARGUMENT_PRINT_ID = "print_id"
 
 class HomeFragment : Fragment() {
 

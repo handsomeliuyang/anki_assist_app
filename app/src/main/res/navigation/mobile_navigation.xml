@@ -13,6 +13,12 @@
         <action
             android:id="@+id/action_home_to_print_options"
             app:destination="@+id/nav_print_options"/>
+        <action
+            android:id="@+id/action_home_to_check"
+            app:destination="@+id/nav_check"/>
+        <action
+            android:id="@+id/action_home_to_coach"
+            app:destination="@+id/nav_coach"/>
     </fragment>
 
     <fragment
@@ -29,7 +35,21 @@
         android:id="@+id/nav_print_preview"
         android:name="com.ly.anki_assist_app.ui.print.preview.PrintPreviewFragment"
         android:label="打印预览"
-        tools:layout="@layout/print_preview_fragment">
+        tools:layout="@layout/fragment_print_preview">
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_check"
+        android:name="com.ly.anki_assist_app.ui.check.CheckFragment"
+        android:label="家长检查"
+        tools:layout="@layout/fragment_check">
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_coach"
+        android:name="com.ly.anki_assist_app.ui.coach.CoachFragment"
+        android:label="辅导错题"
+        tools:layout="@layout/fragment_coach">
     </fragment>
 
 

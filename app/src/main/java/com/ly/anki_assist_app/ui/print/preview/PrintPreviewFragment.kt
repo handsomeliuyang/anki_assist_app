@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.ankidroid.api.AnkiAppApi
-import com.ly.anki_assist_app.databinding.PrintPreviewFragmentBinding
+import com.ly.anki_assist_app.databinding.FragmentPrintPreviewBinding
 import com.ly.anki_assist_app.utils.Status
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -26,7 +26,7 @@ class PrintPreviewFragment : Fragment() {
 
     private val BASE_URL = AnkiAppApi.getAnkiMediaUri()
     private lateinit var viewModel: PrintPreviewViewModel
-    private var _binding: PrintPreviewFragmentBinding? = null
+    private var _binding: FragmentPrintPreviewBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -41,7 +41,7 @@ class PrintPreviewFragment : Fragment() {
 
         viewModel = ViewModelProvider(this).get(PrintPreviewViewModel::class.java)
 
-        _binding = PrintPreviewFragmentBinding.inflate(inflater, container, false)
+        _binding = FragmentPrintPreviewBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         initWebView(binding.webview)
