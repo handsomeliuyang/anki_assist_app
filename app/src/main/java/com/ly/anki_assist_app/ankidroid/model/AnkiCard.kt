@@ -17,6 +17,7 @@ data class AnkiCard(
     var tags: Set<String> = arraySetOf<String>(),
 
     var buttonCount: Int = 0,
+    var nextReviewTimesString: String = "",
     var nextReviewTimes: List<String> = arrayListOf(),
 
     var cardQA: AnkiCardQA = AnkiCardQA()
@@ -24,6 +25,7 @@ data class AnkiCard(
 
     fun setReviewData(buttonCount: Int, nextReviewTimesString: String) {
         this.buttonCount = buttonCount
+        this.nextReviewTimesString = nextReviewTimesString
 
         val mutableList = arrayListOf<String>()
         val reviewTimes = JSONArray(nextReviewTimesString)

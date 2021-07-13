@@ -47,7 +47,7 @@ class PrintPreviewViewModel : ViewModel() {
                 when (resource.status) {
                     Status.LOADING -> emit(Resource.loading("加载中...", null))
                     Status.ERROR -> emit(Resource.error(resource.message ?: "Error", null))
-                    Status.SUCCESS -> emit(Resource.success(CardAppearance.displayString(resource.data ?: emptyList())))
+                    Status.SUCCESS -> emit(Resource.success(CardAppearance.displayPrintString(resource.data ?: emptyList())))
                 }
             } catch (e: Exception) {
                 emit(Resource.error("Cards Loading Error", null))
@@ -68,6 +68,8 @@ class PrintPreviewViewModel : ViewModel() {
                     list.add(CardIdAndState(
                         noteId = it.noteId,
                         cardOrd = it.cardOrd,
+                        buttonCount = it.buttonCount,
+                        nextReviewTimesString = it.nextReviewTimesString,
                         studyState = CardIdAndState.STUDY_STATE_INIT,
                         parentState = CardIdAndState.PARENT_STATE_INIT
                     ))

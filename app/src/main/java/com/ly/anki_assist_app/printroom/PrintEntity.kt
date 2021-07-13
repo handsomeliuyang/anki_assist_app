@@ -3,6 +3,7 @@ package com.ly.anki_assist_app.printroom
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.ichi2.anki.FlashCardsContract
 import java.util.*
 
 @Entity(tableName = "print_table")
@@ -35,6 +36,9 @@ data class PrintEntity(
 data class CardIdAndState(
     val noteId: Long,
     val cardOrd: Int,
+    val buttonCount: Int,
+    val nextReviewTimesString: String,
+
     val studyState: Int,
     val parentState: Int
 ) {

@@ -1,17 +1,45 @@
-package com.ly.anki_assist_app.ui.print.preview
+package com.ly.anki_assist_app.ankidroid.ui
 
 import android.content.Context
+import android.graphics.Color
 import android.util.AttributeSet
+import android.view.View
 import android.webkit.*
+import com.ly.anki_assist_app.ankidroid.api.AnkiAppApi
 import timber.log.Timber
 
 class MyWebView : WebView {
 
-    constructor(context: Context) : super(context)
+    companion object {
+        val BASE_URL by lazy { AnkiAppApi.getAnkiMediaUri() }
+    }
 
-    constructor(context: Context , attrs: AttributeSet) : super(context, attrs)
+    constructor(context: Context) : super(context) {
+        init()
+    }
 
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
+    constructor(context: Context , attrs: AttributeSet) : super(context, attrs) {
+        init()
+    }
+
+    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle) {
+        init()
+    }
+
+    private fun init() {
+        this.settings.apply {
+            this.displayZoomControls = false
+            this.builtInZoomControls = true
+            this.setSupportZoom(true)
+            this.loadWithOverviewMode = true
+            this.javaScriptEnabled = true
+        }
+        this.scrollBarStyle = View.SCROLLBARS_OUTSIDE_OVERLAY
+        this.isScrollbarFadingEnabled = true
+        this.setBackgroundColor(Color.argb(1, 0, 0, 0))
+        this.webViewClient = CardViewerWebClient()
+        this.webChromeClient = AnkiDroidWebChromeClient()
+    }
 
     override fun onScrollChanged(horiz: Int, vert: Int, oldHoriz: Int, oldVert: Int) {
         super.onScrollChanged(horiz, vert, oldHoriz, oldVert)

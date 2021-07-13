@@ -16,6 +16,19 @@ import java.util.HashMap
 class CardApi {
     companion object {
 
+        suspend fun asynGetDueCard(nodeId: Long, cardOrd: Int, buttonCount: Int, nextReviewTimesString: String): AnkiCard {
+            return withContext(Dispatchers.IO) {
+                return@withContext getDueCard(nodeId, cardOrd, buttonCount, nextReviewTimesString)
+            }
+        }
+
+        private fun getDueCard(noteId: Long, cardOrd: Int, buttonCount: Int, nextReviewTimesString: String): AnkiCard {
+            val card = retrieveCard(noteId, cardOrd)
+            card.setReviewData(buttonCount, nextReviewTimesString)
+
+            return card
+        }
+
         /**
          * 异步获取卡片详情
          */

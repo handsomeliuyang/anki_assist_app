@@ -4,27 +4,26 @@ import android.content.Context
 import android.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.os.Environment
 import android.print.PrintAttributes
 import android.print.PrintManager
 import android.view.*
-import androidx.core.os.EnvironmentCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.ankidroid.api.AnkiAppApi
+import com.ly.anki_assist_app.ankidroid.ui.AnkiDroidWebChromeClient
+import com.ly.anki_assist_app.ankidroid.ui.CardViewerWebClient
+import com.ly.anki_assist_app.ankidroid.ui.MyWebView
 import com.ly.anki_assist_app.databinding.FragmentPrintPreviewBinding
 import com.ly.anki_assist_app.utils.Status
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
-const val BASE_URL = "file:///storage/emulated/0/__viewer__.html"
 const val ARGUMENT_PRINT_DECKID_ARRAY = "print_deckid_array"
 
 class PrintPreviewFragment : Fragment() {
 
-    private val BASE_URL = AnkiAppApi.getAnkiMediaUri()
     private lateinit var viewModel: PrintPreviewViewModel
     private var _binding: FragmentPrintPreviewBinding? = null
 
@@ -42,9 +41,6 @@ class PrintPreviewFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(PrintPreviewViewModel::class.java)
 
         _binding = FragmentPrintPreviewBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        initWebView(binding.webview)
 
         viewModel.dueCardsString.observe(viewLifecycleOwner, Observer {
             when(it.status) {
@@ -58,7 +54,7 @@ class PrintPreviewFragment : Fragment() {
         val array = arguments?.getLongArray(ARGUMENT_PRINT_DECKID_ARRAY)?.toTypedArray() ?: emptyArray()
         viewModel.setPrintList(array)
 
-        return root
+        return binding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -91,11 +87,11 @@ class PrintPreviewFragment : Fragment() {
         _binding?.webview?.visibility = View.VISIBLE
         _binding?.messageTitle?.visibility = View.GONE
 
-        Timber.d("webview load url = %s", BASE_URL)
+        Timber.d("webview load url = %s", MyWebView.BASE_URL)
 
         // 显示所有卡片的问题
         _binding?.webview?.loadDataWithBaseURL(
-            BASE_URL + "__viewer__.html",
+            MyWebView.BASE_URL + "__viewer__.html",
             displayString,
             "text/html",
             "utf-8",
@@ -108,22 +104,6 @@ class PrintPreviewFragment : Fragment() {
         _binding?.messageTitle?.visibility = View.VISIBLE
 
         _binding?.messageTitle?.text = msg
-    }
-
-    private fun initWebView(webview: MyWebView) {
-        webview.settings.apply {
-            this.displayZoomControls = false
-            this.builtInZoomControls = true
-            this.setSupportZoom(true)
-            this.loadWithOverviewMode = true
-            this.javaScriptEnabled = true
-        }
-        webview.scrollBarStyle = View.SCROLLBARS_OUTSIDE_OVERLAY
-        webview.isScrollbarFadingEnabled = true
-        webview.setBackgroundColor(Color.argb(1, 0, 0, 0))
-        webview.webViewClient = CardViewerWebClient()
-        webview.webChromeClient = AnkiDroidWebChromeClient()
-        //        webview.addJavascriptInterface()
     }
 
     override fun onDestroyView() {

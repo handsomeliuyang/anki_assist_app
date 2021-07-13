@@ -1,13 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.check.CheckFragment">
 
     <TextView
+        android:id="@+id/process_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_height="50dip"
+        android:background="#B3E5FC"
+        android:gravity="center"
+        android:textColor="@android:color/holo_red_light"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="5 / 20"/>
 
-</FrameLayout>
+    <com.ly.anki_assist_app.ankidroid.ui.MyWebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/right_btn"
+        app:layout_constraintTop_toBottomOf="@id/process_text" />
+
+    <Button
+        android:id="@+id/error_btn"
+        android:layout_width="0dp"
+        android:layout_height="84dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        app:backgroundTint="#FF3D00"
+        app:cornerRadius="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/right_btn"
+        tools:text="错误" />
+
+    <Button
+        android:id="@+id/right_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="84dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        app:backgroundTint="#00E676"
+        app:cornerRadius="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/error_btn"
+        app:layout_constraintRight_toLeftOf="@+id/easy_btn"
+        tools:text="正确" />
+
+    <Button
+        android:id="@+id/easy_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="84dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        app:backgroundTint="#00B0FF"
+        app:cornerRadius="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:text="简单" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -31,6 +31,19 @@ class PrintUtils {
 
             return printDao.getAll()
         }
+
+        suspend fun asynGetPrintById(printId: Int): PrintEntity {
+            return withContext(Dispatchers.IO) {
+                return@withContext getPrintById(printId)
+            }
+        }
+
+        private fun getPrintById(printId: Int): PrintEntity {
+            val database = PrintRoomDatabase.getDatabase()
+            val printDao = database.printDao()
+
+            return printDao.getPrintById(printId)
+        }
     }
 
 }

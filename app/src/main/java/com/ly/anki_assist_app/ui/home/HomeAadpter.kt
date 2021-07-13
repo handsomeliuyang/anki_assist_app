@@ -45,6 +45,7 @@ class HomeAadpter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val viewType = getItemViewType(position)
+
         if (viewType == VIEW_TYPE_OVERVIEW) {
             (holder as OverviewViewHolder).bind(overview)
         } else {
