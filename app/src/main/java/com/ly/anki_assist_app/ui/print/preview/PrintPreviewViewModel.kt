@@ -13,6 +13,7 @@ import com.ly.anki_assist_app.utils.Resource
 import com.ly.anki_assist_app.utils.Status
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.lang.Exception
 import java.util.*
 
@@ -54,6 +55,7 @@ class PrintPreviewViewModel : ViewModel() {
 
                 emit(Resource.success(list))
             } catch (e: Exception) {
+                Timber.e(e)
                 emit(Resource.error("Cards Loading Error", null))
             }
         }
@@ -68,7 +70,7 @@ class PrintPreviewViewModel : ViewModel() {
                     Status.SUCCESS -> emit(Resource.success(CardAppearance.displayPrintString(resource.data ?: emptyList())))
                 }
             } catch (e: Exception) {
-                emit(Resource.error("Cards Loading Error", null))
+                emit(Resource.error("Cards String Loading Error", null))
             }
         }
     }

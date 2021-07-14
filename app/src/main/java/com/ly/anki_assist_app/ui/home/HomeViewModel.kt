@@ -100,10 +100,10 @@ data class PrintItem(
             else -> "异常"
         }
     }
-    fun getPrintInfo(): Spanned {
+    fun getPrintInfo(): String {
         val about = printEntity.deckEntitys.map {
-            "${it.name}: ${it.total}张"
+            "${it.name}(${it.total}张)"
         }
-        return Html.fromHtml("简介：复习 <font color='#FF0000'>${about.joinToString(";")}</font>")
+        return about.joinToString(" ")
     }
 }

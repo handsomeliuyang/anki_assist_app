@@ -58,9 +58,7 @@ class CardApi {
 
                         val nextReviewTimes = it.getString(it.getColumnIndex(FlashCardsContract.ReviewInfo.NEXT_REVIEW_TIMES))
 
-                        val mediaFiles = it.getString(it.getColumnIndex(FlashCardsContract.ReviewInfo.MEDIA_FILES))
-
-                        Timber.d("mediaFiles=%s", mediaFiles)
+//                        val mediaFiles = it.getString(it.getColumnIndex(FlashCardsContract.ReviewInfo.MEDIA_FILES))
 
                         val card = retrieveCard(noteId, cardOrd)
                         card.setReviewData(buttonCount, nextReviewTimes)
@@ -89,13 +87,13 @@ class CardApi {
                 fieldMap[fieldName] = fieldValue
             }
 
-            val cardTemplateName = getCardTemplateName(ankiNoteInfo.modelId, cardOrd)
+//            val cardTemplateName = getCardTemplateName(ankiNoteInfo.modelId, cardOrd)
 
             val ankiCard = AnkiCard()
             ankiCard.noteId = noteId
             ankiCard.cardOrd = cardOrd
             ankiCard.modelId = ankiNoteInfo.modelId
-            ankiCard.cardTemplateName = cardTemplateName
+//            ankiCard.cardTemplateName = cardTemplateName
             ankiCard.fieldMap = fieldMap
             ankiCard.tags = ankiNoteInfo.tagSet
             ankiCard.cardQA = ankiCardQA
@@ -181,30 +179,30 @@ class CardApi {
             return fieldNames
         }
 
-        private fun getCardTemplateName(modelId: Long, cardOrd: Int): String {
-            // 获取 template 信息
-
-            var cardTemplateName = ""
-
-            val uri1 = Uri.withAppendedPath(FlashCardsContract.Model.CONTENT_URI, modelId.toString())
-            val uri2 = Uri.withAppendedPath(uri1, "templates")
-            val cardTemplateUri = Uri.withAppendedPath(uri2, cardOrd.toString())
-            val cardTemplateCursor = App.context.contentResolver.query(
-                cardTemplateUri,
-                null,  // projection
-                null,  // selection is ignored for this URI
-                null,  // selectionArgs is ignored for this URI
-                null // sortOrder is ignored for this URI
-            ) ?: return cardTemplateName
-            cardTemplateCursor.use { it ->
-                if (it.moveToFirst()) {
-                    cardTemplateName = it.getString(it.getColumnIndex(
-                        FlashCardsContract.CardTemplate.NAME))
-                }
-            }
-
-            return cardTemplateName
-        }
+//        private fun getCardTemplateName(modelId: Long, cardOrd: Int): String {
+//            // 获取 template 信息
+//
+//            var cardTemplateName = ""
+//
+//            val uri1 = Uri.withAppendedPath(FlashCardsContract.Model.CONTENT_URI, modelId.toString())
+//            val uri2 = Uri.withAppendedPath(uri1, "templates")
+//            val cardTemplateUri = Uri.withAppendedPath(uri2, cardOrd.toString())
+//            val cardTemplateCursor = App.context.contentResolver.query(
+//                cardTemplateUri,
+//                null,  // projection
+//                null,  // selection is ignored for this URI
+//                null,  // selectionArgs is ignored for this URI
+//                null // sortOrder is ignored for this URI
+//            ) ?: return cardTemplateName
+//            cardTemplateCursor.use { it ->
+//                if (it.moveToFirst()) {
+//                    cardTemplateName = it.getString(it.getColumnIndex(
+//                        FlashCardsContract.CardTemplate.NAME))
+//                }
+//            }
+//
+//            return cardTemplateName
+//        }
 
         /**
          * 异步回答卡片

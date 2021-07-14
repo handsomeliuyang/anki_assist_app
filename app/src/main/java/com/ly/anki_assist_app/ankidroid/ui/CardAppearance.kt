@@ -71,7 +71,7 @@ class CardAppearance {
 
         private fun printCard(deckName: String, index: Int, total: Int, question: String, answer: String): String {
             return "<tr class=\"print_tr\">" +
-                        "<td class=\"print_td\">${deckName}\\n${index+1}/${total}</td>" +
+                        "<td class=\"print_td\">${deckName}<br>${index+1}/${total}</td>" +
                         "<td class=\"print_td\">" +
                             question +
                             "<div style=\"height: 70px;\"></div>" +

@@ -11,7 +11,7 @@ data class AnkiCard(
     var noteId: Long = 0,
     var cardOrd: Int = 0,
     var modelId: Long = 0,
-    var cardTemplateName: String = "",
+//    var cardTemplateName: String = "",
 
     var fieldMap: Map<String, String> = arrayMapOf(),
     var tags: Set<String> = arraySetOf<String>(),
