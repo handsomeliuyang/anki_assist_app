@@ -5,11 +5,8 @@
 
     <data>
         <variable
-            name="htmlTextUtilsStatic"
-            type="com.ly.anki_assist_app.utils.HtmlTextUtils.Companion" />
-        <variable
-            name="printEntity"
-            type="com.ly.anki_assist_app.printroom.PrintEntity" />
+            name="printItem"
+            type="com.ly.anki_assist_app.ui.home.PrintItem" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,33 +18,46 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{printEntity.name}"
+            android:text="@{printItem.showDate()}"
             android:textAppearance="?attr/textAppearanceHeadline6"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            tools:text="名称"/>
+            tools:text="2021-07-14 5:30:222"/>
 
         <TextView
             android:id="@+id/status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/holo_red_light"
-            android:text="@{printEntity.getStateText()}"
-            android:textAppearance="?attr/textAppearanceHeadline6"
+            android:text="@{printItem.getStateText()}"
+            android:textAppearance="?attr/textAppearanceBody2"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             tools:text="未检查" />
+
+        <TextView
+            android:id="@+id/print_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@{printItem.printEntity.name}"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="?android:attr/textColorSecondary"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/name"
+            tools:text="print_due_cards_2021-07-13"/>
 
         <TextView
             android:id="@+id/hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@{htmlTextUtilsStatic.getPrintInfo(printEntity.reviewCount)}"
+            android:text="@{printItem.getPrintInfo()}"
             android:textAppearance="?attr/textAppearanceBody2"
             android:textColor="?android:attr/textColorSecondary"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/name" />
+            app:layout_constraintTop_toBottomOf="@id/print_name"
+            tools:text="简介：复习 2 张"/>
 
         <Button
             android:id="@+id/check_btn"

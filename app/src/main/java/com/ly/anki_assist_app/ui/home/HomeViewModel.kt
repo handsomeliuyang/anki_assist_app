@@ -5,11 +5,13 @@ import android.text.Spanned
 import androidx.lifecycle.*
 import com.ly.anki_assist_app.ankidroid.api.DeckApi
 import com.ly.anki_assist_app.ankidroid.model.AnkiDeck
+import com.ly.anki_assist_app.printroom.PrintEntity
 import com.ly.anki_assist_app.printroom.PrintUtils
 import com.ly.anki_assist_app.utils.Resource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.text.SimpleDateFormat
 
 class HomeViewModel : ViewModel() {
     private val _checkResult = MutableLiveData<Boolean>(false)
@@ -47,12 +49,12 @@ class HomeViewModel : ViewModel() {
     val printList = _checkResult.switchMap { checkResult ->
         liveData {
             if(checkResult) {
-
-                Timber.d("liuyang printList begin")
-
                 val result = try {
                     val list = PrintUtils.asynGetAllPrint()
-                    Resource.success(list)
+                    val result: List<PrintItem> = list.map {
+                        PrintItem(it)
+                    }
+                    Resource.success(result)
                 } catch (e: Exception) {
                     Resource.error(e.message ?: "", null)
                 }
@@ -77,5 +79,28 @@ data class Overview(
         fun empty(): Overview{
             return Overview(emptyList(), 0, 0)
         }
+    }
+    fun getOverviewText(): Spanned {
+        return Html.fromHtml("今日需复习 <font color='#FF0000'>${reviewNums}</font> 张，需学习新卡片 <font color='#FF0000'>${newNums}</font> 张")
+    }
+}
+
+data class PrintItem(
+    val printEntity: PrintEntity
+) {
+    fun showDate(): String{
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        return sdf.format(printEntity.time)
+    }
+    fun getStateText(): String{
+        return when(printEntity.state) {
+            PrintEntity.STATE_NONE_CHECK -> "未检查"
+            PrintEntity.STATE_NONE_COACH -> "未辅导"
+            PrintEntity.STATE_FINISHED -> "完成"
+            else -> "异常"
+        }
+    }
+    fun getPrintInfo(): Spanned {
+        return Html.fromHtml("简介：复习 <font color='#FF0000'>${printEntity.reviewCount}</font> 张")
     }
 }

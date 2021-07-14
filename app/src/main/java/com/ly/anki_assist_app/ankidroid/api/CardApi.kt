@@ -211,16 +211,16 @@ class CardApi {
          */
         suspend fun asynAnswerCard(card: AnkiCard, ease: Ease, timeTaken: Long){
             withContext(Dispatchers.IO) {
-                answerCard(card, ease, timeTaken)
+                answerCard(card, ease)
             }
         }
 
-        private fun answerCard(card: AnkiCard, ease: Ease, timeTaken: Long){
+        private fun answerCard(card: AnkiCard, ease: Ease){
             val values = ContentValues()
             values.put(FlashCardsContract.ReviewInfo.NOTE_ID, card.noteId)
             values.put(FlashCardsContract.ReviewInfo.CARD_ORD, card.cardOrd)
             values.put(FlashCardsContract.ReviewInfo.EASE, ease.value)
-            values.put(FlashCardsContract.ReviewInfo.TIME_TAKEN, timeTaken)
+            values.put(FlashCardsContract.ReviewInfo.TIME_TAKEN, 5000)
 
             App.context.contentResolver.update(
                 FlashCardsContract.ReviewInfo.CONTENT_URI,

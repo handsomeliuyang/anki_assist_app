@@ -52,7 +52,7 @@ class CheckFragment : Fragment() {
 
         // 出错的Btn
         binding.errorBtn.setOnClickListener {
-
+            viewModel.answerCard()
         }
         // 正确的Btn
         binding.rightBtn.setOnClickListener {

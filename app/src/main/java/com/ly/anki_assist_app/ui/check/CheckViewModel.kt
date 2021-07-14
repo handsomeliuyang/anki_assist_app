@@ -90,6 +90,10 @@ class CheckViewModel : ViewModel() {
         }
     }
 
+    fun answerCard() {
+
+    }
+
 }
 
 data class CheckCard(

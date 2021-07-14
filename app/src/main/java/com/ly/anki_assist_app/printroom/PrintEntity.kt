@@ -22,15 +22,6 @@ data class PrintEntity(
         const val STATE_NONE_COACH = 2
         const val STATE_FINISHED = 3
     }
-
-    fun getStateText(): String{
-        return when(state) {
-            STATE_NONE_CHECK -> "未检查"
-            STATE_NONE_COACH -> "未辅导"
-            STATE_FINISHED -> "完成"
-            else -> "异常"
-        }
-    }
 }
 
 data class CardIdAndState(

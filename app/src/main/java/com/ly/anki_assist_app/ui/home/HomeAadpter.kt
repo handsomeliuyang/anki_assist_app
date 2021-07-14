@@ -1,9 +1,6 @@
 package com.ly.anki_assist_app.ui.home
 
-import android.content.Context
 import android.os.Bundle
-import android.text.Html
-import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -12,9 +9,6 @@ import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.databinding.HomeItemOverviewBinding
 import com.ly.anki_assist_app.databinding.HomeItemPrintBinding
 import com.ly.anki_assist_app.printroom.PrintEntity
-import com.ly.anki_assist_app.ui.print.preview.ARGUMENT_PRINT_DECKID_ARRAY
-import com.ly.anki_assist_app.utils.HtmlTextUtils
-import timber.log.Timber
 
 class HomeAadpter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -24,14 +18,14 @@ class HomeAadpter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     private var overview: Overview = Overview.empty()
-    private var list: List<PrintEntity> = emptyList()
+    private var list: List<PrintItem> = emptyList()
 
     fun updateOverview(overview: Overview){
         this.overview = overview
         notifyItemChanged(0)
     }
 
-    fun updatePrint(list: List<PrintEntity>){
+    fun updatePrint(list: List<PrintItem>){
         this.list = list
         notifyDataSetChanged()
     }
@@ -68,7 +62,6 @@ class HomeAadpter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(overview: Overview) {
-            binding.htmlTextUtilsStatic = HtmlTextUtils.Companion
             binding.overView = overview
             binding.printBtn.setOnClickListener {
                 it.findNavController().navigate(R.id.action_home_to_print_options)
@@ -81,17 +74,16 @@ class HomeAadpter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private inner class PrintViewHolder(val binding: HomeItemPrintBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(printEntity: PrintEntity) {
-            binding.htmlTextUtilsStatic = HtmlTextUtils.Companion
-            binding.printEntity = printEntity
+        fun bind(printItem: PrintItem) {
+            binding.printItem = printItem
             binding.checkBtn.setOnClickListener {
                 val bundle = Bundle()
-                bundle.putInt(ARGUMENT_PRINT_ID, printEntity.id)
+                bundle.putInt(ARGUMENT_PRINT_ID, printItem.printEntity.id)
                 it.findNavController().navigate(R.id.action_home_to_check, bundle)
             }
             binding.coachBtn.setOnClickListener {
                 val bundle = Bundle()
-                bundle.putInt(ARGUMENT_PRINT_ID, printEntity.id)
+                bundle.putInt(ARGUMENT_PRINT_ID, printItem.printEntity.id)
                 it.findNavController().navigate(R.id.action_home_to_coach, bundle)
             }
             binding.executePendingBindings()
