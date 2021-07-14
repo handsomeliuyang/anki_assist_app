@@ -18,13 +18,13 @@ class Converters {
     }
 
     @TypeConverter
-    fun stringToList(string: String): List<CardIdAndState> {
-        val itemType = object : TypeToken<List<CardIdAndState>>() {}.type
-        return Gson().fromJson<List<CardIdAndState>>(string, itemType)
+    fun stringToList(string: String): List<DeckEntity> {
+        val itemType = object : TypeToken<List<DeckEntity>>() {}.type
+        return Gson().fromJson<List<DeckEntity>>(string, itemType)
     }
 
     @TypeConverter
-    fun listToString(list: List<CardIdAndState>):String? {
+    fun listToString(list: List<DeckEntity>):String? {
         return Gson().toJson(list)
     }
 

@@ -2,6 +2,7 @@ package com.ly.anki_assist_app.ankidroid.ui
 
 import com.ly.anki_assist_app.App
 import com.ly.anki_assist_app.ankidroid.model.AnkiCard
+import com.ly.anki_assist_app.ui.print.preview.PrintDeckCards
 import com.ly.anki_assist_app.utils.Utils
 
 class CardAppearance {
@@ -33,7 +34,7 @@ class CardAppearance {
             return printTemplate.replace("::content::", content.toString())
         }
 
-        fun displayPrintString(cardList: List<AnkiCard>): String {
+        fun displayPrintString(list: List<PrintDeckCards>): String {
             // 加载卡片布局模板
             val printTemplate = loadPrintTemplate()
 
@@ -48,15 +49,18 @@ class CardAppearance {
                     "       <th width=\"100%\" class=\"print_th\">问题</th>\n" +
                     "   </tr>\n")
 
-            for ((index, card) in cardList.withIndex()) {
-                content.append(
-                    printCard(
-                        index,
-                        cardList.size,
-                        card.cardQA.questionContent,
-                        card.cardQA.answerContent
+            for (printDeckCards in list) {
+                for ((index, card) in printDeckCards.cards.withIndex()) {
+                    content.append(
+                        printCard(
+                            printDeckCards.printDeck.name,
+                            index,
+                            printDeckCards.cards.size,
+                            card.cardQA.questionContent,
+                            card.cardQA.answerContent
+                        )
                     )
-                )
+                }
             }
 
             // 添加table的尾部
@@ -65,9 +69,9 @@ class CardAppearance {
             return printTemplate.replace("::content::", content.toString())
         }
 
-        private fun printCard(index: Int, total: Int, question: String, answer: String): String {
+        private fun printCard(deckName: String, index: Int, total: Int, question: String, answer: String): String {
             return "<tr class=\"print_tr\">" +
-                        "<td class=\"print_td\">${index+1}/${total}</td>" +
+                        "<td class=\"print_td\">${deckName}\\n${index+1}/${total}</td>" +
                         "<td class=\"print_td\">" +
                             question +
                             "<div style=\"height: 70px;\"></div>" +

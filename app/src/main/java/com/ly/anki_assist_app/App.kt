@@ -18,7 +18,7 @@ class App : Application() {
         App.context = this.applicationContext
 
         // 初始化日志库
-        Timber.plant(if (BuildConfig.DEBUG) Timber.DebugTree() else CrashReportingTree())
+        Timber.plant(if (BuildConfig.DEBUG) CustomDebugTree() else CrashReportingTree())
     }
 }
 
@@ -31,4 +31,11 @@ private class CrashReportingTree : Timber.Tree() {
         // TODO-ly 把Error和Warn日志上报到后台
     }
 
+}
+
+private class CustomDebugTree : Timber.DebugTree() {
+
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+        super.log(priority, "liuyang_$tag", message, t)
+    }
 }

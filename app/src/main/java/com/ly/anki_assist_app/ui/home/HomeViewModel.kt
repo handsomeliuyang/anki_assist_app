@@ -101,6 +101,9 @@ data class PrintItem(
         }
     }
     fun getPrintInfo(): Spanned {
-        return Html.fromHtml("简介：复习 <font color='#FF0000'>${printEntity.reviewCount}</font> 张")
+        val about = printEntity.deckEntitys.map {
+            "${it.name}: ${it.total}张"
+        }
+        return Html.fromHtml("简介：复习 <font color='#FF0000'>${about.joinToString(";")}</font>")
     }
 }

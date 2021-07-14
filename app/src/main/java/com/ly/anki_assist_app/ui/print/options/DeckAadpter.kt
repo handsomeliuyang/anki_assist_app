@@ -56,6 +56,7 @@ class DeckAadpter(context: Context) :
         viewType: Int
     ): DeckChildViewHolder {
         return DeckChildViewHolder(
+            this,
             ItemDeckBinding.inflate(
                 LayoutInflater.from(childViewGroup.context),
                 childViewGroup,
@@ -78,7 +79,7 @@ class DeckAadpter(context: Context) :
         childPosition: Int,
         child: DeckChild
     ) {
-        childViewHolder.bind(parentList.get(parentPosition), child)
+        childViewHolder.bind(parentList.get(parentPosition), child, parentPosition)
     }
 
 }
@@ -147,9 +148,9 @@ class DeckParentViewHolder(val adpter: DeckAadpter, val expandImage: Drawable, v
     }
 }
 
-class DeckChildViewHolder(val binding: ItemDeckBinding) :
+class DeckChildViewHolder(val adpter: DeckAadpter, val binding: ItemDeckBinding) :
     ChildViewHolder<DeckChild>(binding.root) {
-    fun bind(deckParent: DeckParent, deckChild: DeckChild) {
+    fun bind(deckParent: DeckParent, deckChild: DeckChild, parentPosition: Int) {
         binding.checked = deckChild.checked
         binding.deck = deckChild.deck
         binding.dueCounts = deckChild.deck.deckDueCounts
@@ -158,6 +159,11 @@ class DeckChildViewHolder(val binding: ItemDeckBinding) :
         binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isPressed) { // 只处理点击后的状态改变
                 deckChild.checked = isChecked
+
+                if(!deckParent.checked && isChecked) {
+                    deckParent.checked = true
+                    adpter.notifyParentChanged(parentPosition)
+                }
             }
         }
     }

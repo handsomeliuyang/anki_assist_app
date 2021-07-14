@@ -32,44 +32,59 @@ class CheckViewModel : ViewModel() {
         }
     }
 
-    private val _index = MutableLiveData<Int>(-1)
+    private val _next = MutableLiveData<Int>()
+    private var _currentIndex = Pair<Int, Int>(0, -1)
+//    private val _index = MutableLiveData<Pair<Int, Int>>()
 
     fun resetIndex(){
-        _index.value = 0
+        _next.value = 0
+        _currentIndex = Pair(0, -1)
     }
 
     fun increaseIndex(){
-        _index.value = _index.value?.plus(1)
+        _next.value = _next.value?.plus(1)
     }
 
-    val checkCard = _index.switchMap { index ->
+    val checkCard = _next.switchMap { index ->
         liveData {
             if(print.value?.status != Status.SUCCESS){
                 emit(Resource.error("打印记录加载失败", null))
                 return@liveData
             }
+            val deckEntitys = print.value?.data?.deckEntitys ?: emptyList()
 
-            val cardIdAndStateList = print.value?.data?.cardIdAndStateList ?: emptyList()
+            var first = _currentIndex.first
+            var second = _currentIndex.second
 
-            if(index < 0 || index >= cardIdAndStateList.size) {
-                emit(Resource.error("index is error.", null))
+            // 计算下一个
+            second++
+
+            if(second >= deckEntitys.get(_currentIndex.first).cards.size) {
+                first ++
+                second = 0
+            }
+
+            if (first >= deckEntitys.size) {
+                emit(Resource.success(null))
                 return@liveData
             }
 
-            val cardIdAndState = cardIdAndStateList.get(index)
+            _currentIndex = Pair(first, second)
+            val deckEntity = deckEntitys.get(first)
+            val card = deckEntity.cards.get(second)
 
             // 查询问题内容及
             val process = index + 1
-            val total = cardIdAndStateList.size
+            val total = deckEntity.cards.size
 
             try {
                 val ankiCard: AnkiCard = CardApi.asynGetDueCard(
-                    cardIdAndState.noteId,
-                    cardIdAndState.cardOrd,
-                    cardIdAndState.buttonCount,
-                    cardIdAndState.nextReviewTimesString
+                    card.noteId,
+                    card.cardOrd,
+                    card.buttonCount,
+                    card.nextReviewTimesString
                 )
-                emit(Resource.success(CheckCard(process, total, ankiCard)))
+                emit(Resource.success(CheckCard(deckEntity.name, process, total, ankiCard)))
             } catch (e: Exception) {
                 emit(Resource.error(e.message ?: "", null))
             }
@@ -97,12 +112,13 @@ class CheckViewModel : ViewModel() {
 }
 
 data class CheckCard(
+    val deckName: String,
     val process: Int,
     val total: Int,
     val ankiCard: AnkiCard
 ) {
     fun processShow(): String {
-        return "${process} / ${total}"
+        return "${deckName}: ${process} / ${total}"
     }
     fun errorBtnShow(): String {
         if (ankiCard.buttonCount == 3) {

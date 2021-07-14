@@ -7,11 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.ankidroid.ui.MyWebView
 import com.ly.anki_assist_app.databinding.FragmentCheckBinding
 import com.ly.anki_assist_app.ui.home.ARGUMENT_PRINT_ID
-import com.ly.anki_assist_app.ui.print.preview.ARGUMENT_PRINT_DECKID_ARRAY
 import com.ly.anki_assist_app.utils.Status
 
 class CheckFragment : Fragment() {

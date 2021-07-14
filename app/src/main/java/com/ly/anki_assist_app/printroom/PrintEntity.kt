@@ -13,8 +13,7 @@ data class PrintEntity(
     val name: String,
     val time: Date?,
     val state: Int?,
-    val reviewCount: Int?,
-    val cardIdAndStateList: List<CardIdAndState>
+    val deckEntitys: List<DeckEntity>
 ) {
 
     companion object {
@@ -24,7 +23,14 @@ data class PrintEntity(
     }
 }
 
-data class CardIdAndState(
+data class DeckEntity(
+    val deckId: Long,
+    val name: String,
+    val total: Int,
+    val cards: List<CardEntity>
+)
+
+data class CardEntity(
     val noteId: Long,
     val cardOrd: Int,
     val buttonCount: Int,

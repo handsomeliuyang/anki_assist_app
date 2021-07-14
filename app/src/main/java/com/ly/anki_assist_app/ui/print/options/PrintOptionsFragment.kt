@@ -2,16 +2,13 @@ package com.ly.anki_assist_app.ui.print.options
 
 import android.os.Bundle
 import android.view.*
-import androidx.core.os.bundleOf
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.databinding.FragmentPrintOptionsBinding
-import com.ly.anki_assist_app.ui.print.preview.ARGUMENT_PRINT_DECKID_ARRAY
-import com.ly.anki_assist_app.ui.print.preview.PrintPreviewFragment
+import com.ly.anki_assist_app.ui.print.preview.ARGUMENT_PRINT_DECKS
+import com.ly.anki_assist_app.ui.print.preview.PrintDeck
 import timber.log.Timber
 
 class PrintOptionsFragment : Fragment() {
@@ -57,22 +54,22 @@ class PrintOptionsFragment : Fragment() {
 
         val deckAdapter = binding.recyclerView.adapter as DeckAadpter
 
-        val deckIdList = ArrayList<Long>()
+        val printDecks = ArrayList<PrintDeck>()
         deckAdapter.parentList
             .filter { it.checked }
             .map { deckParent ->
-                deckIdList.add(deckParent.deck.deckId)
+                printDecks.add(PrintDeck.from(deckParent.deck))
                 deckParent.children
                     .filter { it.checked }
                     .map { deckChild ->
-                        deckIdList.add(deckChild.deck.deckId)
+                        printDecks.add(PrintDeck.from(deckChild.deck))
                     }
             }
 
-        Timber.d("selected decks %s", deckIdList.toString())
+        Timber.d("printDecks %s", printDecks)
 
         val bundle = Bundle()
-        bundle.putLongArray(ARGUMENT_PRINT_DECKID_ARRAY, deckIdList.toLongArray())
+        bundle.putParcelableArrayList(ARGUMENT_PRINT_DECKS, printDecks)
         NavHostFragment.findNavController(this).navigate(R.id.action_print_options_to_print_preview, bundle)
         return true
     }

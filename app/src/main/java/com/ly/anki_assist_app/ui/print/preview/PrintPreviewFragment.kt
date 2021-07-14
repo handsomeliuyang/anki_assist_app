@@ -1,7 +1,6 @@
 package com.ly.anki_assist_app.ui.print.preview
 
 import android.content.Context
-import android.graphics.Color
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.print.PrintAttributes
@@ -10,9 +9,6 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.ly.anki_assist_app.R
-import com.ly.anki_assist_app.ankidroid.api.AnkiAppApi
-import com.ly.anki_assist_app.ankidroid.ui.AnkiDroidWebChromeClient
-import com.ly.anki_assist_app.ankidroid.ui.CardViewerWebClient
 import com.ly.anki_assist_app.ankidroid.ui.MyWebView
 import com.ly.anki_assist_app.databinding.FragmentPrintPreviewBinding
 import com.ly.anki_assist_app.utils.Status
@@ -20,7 +16,7 @@ import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
-const val ARGUMENT_PRINT_DECKID_ARRAY = "print_deckid_array"
+const val ARGUMENT_PRINT_DECKS = "print_decks"
 
 class PrintPreviewFragment : Fragment() {
 
@@ -51,8 +47,8 @@ class PrintPreviewFragment : Fragment() {
         })
 
         // 获取参数
-        val array = arguments?.getLongArray(ARGUMENT_PRINT_DECKID_ARRAY)?.toTypedArray() ?: emptyArray()
-        viewModel.setPrintList(array)
+        val printDecks = arguments?.getParcelableArrayList<PrintDeck>(ARGUMENT_PRINT_DECKS) ?: emptyList<PrintDeck>()
+        viewModel.setPlanDecks(printDecks)
 
         return binding.root
     }
