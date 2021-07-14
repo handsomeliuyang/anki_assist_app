@@ -12,6 +12,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
+import java.util.*
 
 class HomeViewModel : ViewModel() {
     private val _checkResult = MutableLiveData<Boolean>(false)
@@ -28,6 +29,7 @@ class HomeViewModel : ViewModel() {
         liveData {
             if(checkResult) {
                 val result = try {
+                    // 查询所需要复习的卡片
                     val dueDeckList = DeckApi.asynGetDueDeckList()
                     var reviewNumbs = 0
                     var newNumbs = 0
@@ -50,7 +52,8 @@ class HomeViewModel : ViewModel() {
         liveData {
             if(checkResult) {
                 val result = try {
-                    val list = PrintUtils.asynGetAllPrint()
+                    // 查询今日的打印记录
+                    val list = PrintUtils.asynPrintsByDate(Date())
                     val result: List<PrintItem> = list.map {
                         PrintItem(it)
                     }

@@ -2,6 +2,8 @@ package com.ly.anki_assist_app.printroom
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
+import java.util.*
 
 class PrintUtils {
 
@@ -19,17 +21,33 @@ class PrintUtils {
             printDao.insertAll(*printEntitys)
         }
 
-        suspend fun asynGetAllPrint(): List<PrintEntity> {
+        suspend fun asynPrintsByDate(date: Date): List<PrintEntity> {
             return withContext(Dispatchers.IO) {
-                return@withContext getAllPrint()
+                return@withContext getPrintsByDate(date)
             }
         }
 
-        private fun getAllPrint(): List<PrintEntity>{
+        private fun getPrintsByDate(date: Date): List<PrintEntity>{
             val database = PrintRoomDatabase.getDatabase()
             val printDao = database.printDao()
 
-            return printDao.getAll()
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            calendar[Calendar.MILLISECOND] = 0
+            calendar[Calendar.SECOND] = 0
+            calendar[Calendar.MINUTE] = 0
+            calendar[Calendar.HOUR_OF_DAY] = 0
+            val start = calendar.time.time.toLong()
+
+            calendar[Calendar.MILLISECOND] = 0
+            calendar[Calendar.SECOND] = 59
+            calendar[Calendar.MINUTE] = 59
+            calendar[Calendar.HOUR_OF_DAY] = 23
+            val end = calendar.time.time.toLong()
+
+            Timber.d("end %s", Date(end))
+
+            return printDao.getPrintsByDate(start, end)
         }
 
         suspend fun asynGetPrintById(printId: Int): PrintEntity {
