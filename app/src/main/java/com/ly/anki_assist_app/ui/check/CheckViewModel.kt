@@ -7,6 +7,7 @@ import com.ly.anki_assist_app.ankidroid.ui.CardAppearance
 import com.ly.anki_assist_app.printroom.PrintUtils
 import com.ly.anki_assist_app.utils.Resource
 import com.ly.anki_assist_app.utils.Status
+import kotlinx.coroutines.launch
 
 class CheckViewModel : ViewModel() {
 
@@ -34,11 +35,11 @@ class CheckViewModel : ViewModel() {
 
     private val _next = MutableLiveData<Int>()
     private var _currentIndex = Pair<Int, Int>(0, -1)
-//    private val _index = MutableLiveData<Pair<Int, Int>>()
 
     fun resetIndex(){
-        _next.value = 0
         _currentIndex = Pair(0, -1)
+        // 注意：livedata的监听是马上执行，而不是等当前方法执行完后
+        _next.value = 0
     }
 
     fun increaseIndex(){
@@ -84,7 +85,26 @@ class CheckViewModel : ViewModel() {
                     card.buttonCount,
                     card.nextReviewTimesString
                 )
-                emit(Resource.success(CheckCard(deckEntity.name, process, total, ankiCard)))
+
+                var errorButtonIndex: Int = -1
+                var rightButtonIndex: Int = -1
+                var easyButtonIndex: Int = -1
+                if(ankiCard.buttonCount == 2) {
+                    errorButtonIndex = 0
+                    rightButtonIndex = 1
+                    easyButtonIndex = -1
+                } else if (ankiCard.buttonCount == 3) {
+                    errorButtonIndex = 0
+                    rightButtonIndex = 1
+                    easyButtonIndex = 2
+                } else if(ankiCard.buttonCount == 4) {
+                    // TODO-ly 缺乏一个识别逻辑，是否超过20
+                    errorButtonIndex = 1
+                    rightButtonIndex = 2
+                    easyButtonIndex = 3
+                }
+
+                emit(Resource.success(CheckCard(deckEntity.name, process, total, ankiCard, errorButtonIndex, rightButtonIndex, easyButtonIndex)))
             } catch (e: Exception) {
                 emit(Resource.error(e.message ?: "", null))
             }
@@ -97,7 +117,11 @@ class CheckViewModel : ViewModel() {
                 when (resource.status) {
                     Status.LOADING -> emit(Resource.loading("加载中...", null))
                     Status.ERROR -> emit(Resource.error(resource.message ?: "Error", null))
-                    Status.SUCCESS -> emit(Resource.success(CardAppearance.displayCheckString(resource.data?.ankiCard)))
+                    Status.SUCCESS -> {
+                        if (resource.data != null) {
+                            emit(Resource.success(CardAppearance.displayCheckString(resource.data?.ankiCard)))
+                        }
+                    }
                 }
             } catch (e: java.lang.Exception) {
                 emit(Resource.error("Cards Loading Error", null))
@@ -105,46 +129,70 @@ class CheckViewModel : ViewModel() {
         }
     }
 
-    fun answerCard() {
-
+    fun answerCardOnError() {
+        val index = checkCard.value?.data?.errorButtonIndex ?: return
+        answerCard(index)
     }
 
+    fun answerCardOnRight() {
+        val index = checkCard.value?.data?.rightButtonIndex ?: return
+        answerCard(index)
+    }
+
+    fun answerCardOnEasy() {
+        val index = checkCard.value?.data?.easyButtonIndex ?: return
+        answerCard(index)
+    }
+
+    private fun answerCard(buttonIndex: Int) {
+        if (buttonIndex == -1) return
+        viewModelScope.launch {
+            // TODO-ly 先修改Anki的状态
+
+            // TODO-ly 再修改本地数据库的状态
+
+            // 下一个
+            increaseIndex()
+        }
+    }
 }
 
 data class CheckCard(
     val deckName: String,
     val process: Int,
     val total: Int,
-    val ankiCard: AnkiCard
+    val ankiCard: AnkiCard,
+    val errorButtonIndex: Int,
+    val rightButtonIndex: Int,
+    val easyButtonIndex: Int
 ) {
     fun processShow(): String {
         return "${deckName}: ${process} / ${total}"
     }
     fun errorBtnShow(): String {
-        if (ankiCard.buttonCount == 3) {
+        if(errorButtonIndex == -1) {
+            return "错误\n异常"
+        }
+
+        if (ankiCard.buttonCount == 3 || ankiCard.buttonCount == 2) {
             return "错误\n重来"
         }
         if(ankiCard.buttonCount == 4) {
-            return "错误\n<20天 困难 ${ankiCard.nextReviewTimes[1]}月\n>20天 重来"
+            return "错误\n<20天 困难 ${ankiCard.nextReviewTimes[1]}\n>20天 重来"
         }
         return "错误\n异常"
     }
     fun rightBtnShow(): String {
-        if (ankiCard.buttonCount == 3) {
-            return "正确\n${ankiCard.nextReviewTimes[1]}"
+        if(rightButtonIndex == -1) {
+            return "正确\n异常"
         }
-        if(ankiCard.buttonCount == 4) {
-            return "正确\n${ankiCard.nextReviewTimes[2]}"
-        }
-        return "正确\n异常"
+
+        return "正确\n${ankiCard.nextReviewTimes[rightButtonIndex]}"
     }
     fun easyBtnShow(): String {
-        if (ankiCard.buttonCount == 3) {
-            return "简单\n${ankiCard.nextReviewTimes[2]}"
+        if(easyButtonIndex == -1) {
+            return "简单\n异常"
         }
-        if(ankiCard.buttonCount == 4) {
-            return "简单\n${ankiCard.nextReviewTimes[3]}"
-        }
-        return "简单\n异常"
+        return "简单\n${ankiCard.nextReviewTimes[easyButtonIndex]}"
     }
 }

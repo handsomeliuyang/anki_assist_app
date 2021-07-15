@@ -7,6 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ly.anki_assist_app.ankidroid.ui.MyWebView
 import com.ly.anki_assist_app.databinding.FragmentCheckBinding
 import com.ly.anki_assist_app.ui.home.ARGUMENT_PRINT_ID
@@ -35,10 +38,30 @@ class CheckFragment : Fragment() {
 
         viewModel.checkCard.observe(this.viewLifecycleOwner, Observer {
             if (it.status == Status.SUCCESS) {
-                _binding?.processText?.text = it.data?.processShow()
-                _binding?.errorBtn?.text = it.data?.errorBtnShow()
-                _binding?.rightBtn?.text = it.data?.rightBtnShow()
-                _binding?.easyBtn?.text = it.data?.easyBtnShow()
+                if (it.data == null) {
+                    // 检查结束
+                    val context = this.context ?: return@Observer
+                    MaterialAlertDialogBuilder(context)
+                        .setTitle("提示")
+                        .setMessage("已检查完，辛苦了！！！")
+                        .setPositiveButton("确定") { dialog, which ->
+                            this.findNavController().popBackStack()
+                        }
+                        .show()
+                    return@Observer
+                }
+                val checkCard = it.data
+
+                _binding?.processText?.text = checkCard.processShow()
+                _binding?.errorBtn?.text = checkCard.errorBtnShow()
+                _binding?.rightBtn?.text = checkCard.rightBtnShow()
+
+                if(checkCard.easyButtonIndex == -1) {
+                    _binding?.easyBtn?.visibility = View.GONE
+                } else {
+                    _binding?.easyBtn?.visibility = View.VISIBLE
+                    _binding?.easyBtn?.text = checkCard.easyBtnShow()
+                }
             }
         })
 
@@ -50,15 +73,15 @@ class CheckFragment : Fragment() {
 
         // 出错的Btn
         binding.errorBtn.setOnClickListener {
-            viewModel.answerCard()
+            viewModel.answerCardOnError()
         }
         // 正确的Btn
         binding.rightBtn.setOnClickListener {
-
+            viewModel.answerCardOnRight()
         }
         // 容易的Btn
         binding.easyBtn.setOnClickListener {
-
+            viewModel.answerCardOnEasy()
         }
 
         // 获取参数
