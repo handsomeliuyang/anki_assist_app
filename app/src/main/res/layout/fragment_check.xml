@@ -1,65 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.check.CheckFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/process_text"
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="checkCard"
+            type="com.ly.anki_assist_app.ui.check.CheckCard" />
+        <variable
+            name="checkViewModel"
+            type="com.ly.anki_assist_app.ui.check.CheckViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="50dip"
-        android:background="#B3E5FC"
-        android:gravity="center"
-        android:textColor="@android:color/holo_red_light"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="5 / 20"/>
+        android:layout_height="match_parent"
+        tools:context=".ui.check.CheckFragment">
 
-    <com.ly.anki_assist_app.ankidroid.ui.MyWebView
-        android:id="@+id/webview"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/right_btn"
-        app:layout_constraintTop_toBottomOf="@id/process_text" />
+        <LinearLayout
+            android:id="@+id/process_layout"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="#B3E5FC">
 
-    <Button
-        android:id="@+id/error_btn"
-        android:layout_width="0dp"
-        android:layout_height="84dp"
-        android:insetTop="0dp"
-        android:insetBottom="0dp"
-        app:backgroundTint="#FF3D00"
-        app:cornerRadius="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/right_btn"
-        tools:text="错误" />
+            <Button
+                android:id="@+id/before_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:backgroundTint="#FF3D00"
+                app:cornerRadius="0dp"
+                android:text="上一页" />
 
-    <Button
-        android:id="@+id/right_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="84dp"
-        android:insetTop="0dp"
-        android:insetBottom="0dp"
-        app:backgroundTint="#00E676"
-        app:cornerRadius="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/error_btn"
-        app:layout_constraintRight_toLeftOf="@+id/easy_btn"
-        tools:text="正确" />
+            <TextView
+                android:id="@+id/process_text"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="@android:color/holo_red_light"
+                android:text="@{checkCard.processShow()}"
+                tools:text="5 / 20" />
 
-    <Button
-        android:id="@+id/easy_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="84dp"
-        android:insetTop="0dp"
-        android:insetBottom="0dp"
-        app:backgroundTint="#00B0FF"
-        app:cornerRadius="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:text="简单" />
+            <Button
+                android:id="@+id/next_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:backgroundTint="#FF3D00"
+                app:cornerRadius="0dp"
+                android:text="下一页" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+        <com.ly.anki_assist_app.ankidroid.ui.MyWebView
+            android:id="@+id/webview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/answer_layout"
+            app:layout_constraintTop_toBottomOf="@id/process_layout" />
+
+        <RelativeLayout
+            android:id="@+id/answer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="84dip"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:id="@+id/answer_btn_layout"
+                android:layout_width="match_parent"
+                android:layout_height="84dp"
+                android:orientation="horizontal"
+                android:visibility="@{checkCard.isShowAnswerBtnLayout() ? View.VISIBLE : View.GONE}">
+
+                <Button
+                    android:id="@+id/error_btn"
+                    android:layout_width="0dip"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:backgroundTint="#FF3D00"
+                    app:cornerRadius="0dp"
+                    android:text="@{checkCard.errorBtnShow()}"
+                    android:onClick="@{()-> checkViewModel.answerCardOnError()}"
+                    tools:text="错误" />
+
+                <Button
+                    android:id="@+id/right_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:backgroundTint="#00E676"
+                    app:cornerRadius="0dp"
+                    android:text="@{checkCard.rightBtnShow()}"
+                    android:onClick="@{()-> checkViewModel.answerCardOnRight()}"
+                    tools:text="正确" />
+
+                <Button
+                    android:id="@+id/easy_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:backgroundTint="#00B0FF"
+                    app:cornerRadius="0dp"
+                    android:text="@{checkCard.easyBtnShow()}"
+                    android:visibility="@{checkCard.easyButtonIndex == -1 ? View.GONE : View.VISIBLE}"
+                    android:onClick="@{()-> checkViewModel.answerCardOnEasy()}"
+                    tools:text="简单" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/answer_msg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{checkCard.isShowAnswerBtnLayout() ? View.GONE : View.VISIBLE}"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dip"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="@{checkCard.getCheckMsg()}"
+                    tools:text="测试信息"
+                    android:gravity="center"
+                    android:background="@android:color/white" />
+
+                <Button
+                    android:id="@+id/again_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:backgroundTint="#FF3D00"
+                    app:cornerRadius="0dp"
+                    android:text="重新检查" />
+            </LinearLayout>
+        </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

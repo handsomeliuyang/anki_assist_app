@@ -1,8 +1,6 @@
 package com.ly.anki_assist_app.printroom
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import java.util.*
 
 @Dao
@@ -17,8 +15,10 @@ interface PrintDao {
     @Insert
     fun insertAll(vararg printEntitys: PrintEntity)
 
-//
-//    @Delete
-//    fun delete(printEntity: PrintEntity)
+    @Update
+    fun update(printEntity: PrintEntity)
+
+    @Delete
+    fun delete(printEntity: PrintEntity)
 
 }

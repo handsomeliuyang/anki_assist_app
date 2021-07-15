@@ -4,6 +4,8 @@ import androidx.lifecycle.*
 import com.ly.anki_assist_app.ankidroid.api.CardApi
 import com.ly.anki_assist_app.ankidroid.model.AnkiCard
 import com.ly.anki_assist_app.ankidroid.ui.CardAppearance
+import com.ly.anki_assist_app.printroom.CardEntity
+import com.ly.anki_assist_app.printroom.PrintEntity
 import com.ly.anki_assist_app.printroom.PrintUtils
 import com.ly.anki_assist_app.utils.Resource
 import com.ly.anki_assist_app.utils.Status
@@ -104,7 +106,7 @@ class CheckViewModel : ViewModel() {
                     easyButtonIndex = 3
                 }
 
-                emit(Resource.success(CheckCard(deckEntity.name, process, total, ankiCard, errorButtonIndex, rightButtonIndex, easyButtonIndex)))
+                emit(Resource.success(CheckCard(deckEntity.name, process, total, ankiCard, card, errorButtonIndex, rightButtonIndex, easyButtonIndex)))
             } catch (e: Exception) {
                 emit(Resource.error(e.message ?: "", null))
             }
@@ -131,25 +133,33 @@ class CheckViewModel : ViewModel() {
 
     fun answerCardOnError() {
         val index = checkCard.value?.data?.errorButtonIndex ?: return
-        answerCard(index)
+        answerCard(index, false)
     }
 
     fun answerCardOnRight() {
         val index = checkCard.value?.data?.rightButtonIndex ?: return
-        answerCard(index)
+        answerCard(index, true)
     }
 
     fun answerCardOnEasy() {
         val index = checkCard.value?.data?.easyButtonIndex ?: return
-        answerCard(index)
+        answerCard(index, true)
     }
 
-    private fun answerCard(buttonIndex: Int) {
+    private fun answerCard(buttonIndex: Int, isRight: Boolean) {
         if (buttonIndex == -1) return
-        viewModelScope.launch {
-            // TODO-ly 先修改Anki的状态
+        val checkCard = checkCard.value?.data ?: return
+        val printEntity = print.value?.data ?: return
 
-            // TODO-ly 再修改本地数据库的状态
+
+        viewModelScope.launch {
+            // 先修改Anki的状态
+            CardApi.asynAnswerCard(checkCard.ankiCard, buttonIndex)
+
+            // 再修改本地数据库的状态
+            checkCard.cardEntity.studyState = if(isRight) CardEntity.STUDY_STATE_RIGHT else CardEntity.STUDY_STATE_ERROR
+            checkCard.cardEntity.parentState = CardEntity.PARENT_STATE_CHECKED
+            PrintUtils.asynUpdate(printEntity)
 
             // 下一个
             increaseIndex()
@@ -162,6 +172,7 @@ data class CheckCard(
     val process: Int,
     val total: Int,
     val ankiCard: AnkiCard,
+    val cardEntity: CardEntity,
     val errorButtonIndex: Int,
     val rightButtonIndex: Int,
     val easyButtonIndex: Int
@@ -194,5 +205,24 @@ data class CheckCard(
             return "简单\n异常"
         }
         return "简单\n${ankiCard.nextReviewTimes[easyButtonIndex]}"
+    }
+    fun isShowAnswerBtnLayout(): Boolean{
+        return cardEntity.parentState == CardEntity.PARENT_STATE_INIT
+    }
+    fun getCheckMsg(): String {
+
+        val studyResult = when(cardEntity.studyState) {
+            CardEntity.STUDY_STATE_ERROR -> "答题：错误"
+            CardEntity.STUDY_STATE_RIGHT -> "答题：正确"
+            else -> "答题中..."
+        }
+
+        val parentResult = when(cardEntity.parentState){
+            CardEntity.PARENT_STATE_CHECKED -> "家长已检查"
+            CardEntity.PARENT_STATE_COACH -> "此题已辅导"
+            else -> "待检验..."
+        }
+
+        return "${studyResult}\n${parentResult}"
     }
 }

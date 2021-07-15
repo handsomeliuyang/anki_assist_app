@@ -8,6 +8,20 @@ import java.util.*
 class PrintUtils {
 
     companion object {
+
+        suspend fun asynUpdate(printEntity: PrintEntity){
+            withContext(Dispatchers.IO) {
+                update(printEntity)
+            }
+        }
+
+        private fun update(printEntity: PrintEntity){
+            val database = PrintRoomDatabase.getDatabase()
+            val printDao = database.printDao()
+
+            printDao.update(printEntity)
+        }
+
         suspend fun asynSavePrint(vararg printEntitys: PrintEntity) {
             withContext(Dispatchers.IO) {
                 savePrint(*printEntitys)

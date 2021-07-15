@@ -36,8 +36,8 @@ data class CardEntity(
     val buttonCount: Int,
     val nextReviewTimesString: String,
 
-    val studyState: Int,
-    val parentState: Int
+    var studyState: Int,
+    var parentState: Int
 ) {
     companion object {
         const val STUDY_STATE_INIT = 0

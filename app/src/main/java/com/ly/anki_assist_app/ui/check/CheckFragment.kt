@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ly.anki_assist_app.ankidroid.ui.MyWebView
 import com.ly.anki_assist_app.databinding.FragmentCheckBinding
+import com.ly.anki_assist_app.printroom.CardEntity
 import com.ly.anki_assist_app.ui.home.ARGUMENT_PRINT_ID
 import com.ly.anki_assist_app.utils.Status
 
@@ -28,7 +29,10 @@ class CheckFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewModel = ViewModelProvider(this).get(CheckViewModel::class.java)
-        _binding = FragmentCheckBinding.inflate(inflater, container, false)
+        _binding = FragmentCheckBinding.inflate(inflater, container, false).apply {
+            this.checkViewModel = viewModel
+            this.lifecycleOwner = this@CheckFragment.viewLifecycleOwner
+        }
 
         viewModel.print.observe(viewLifecycleOwner, Observer {
             if (it.status == Status.SUCCESS) {
@@ -50,18 +54,9 @@ class CheckFragment : Fragment() {
                         .show()
                     return@Observer
                 }
-                val checkCard = it.data
 
-                _binding?.processText?.text = checkCard.processShow()
-                _binding?.errorBtn?.text = checkCard.errorBtnShow()
-                _binding?.rightBtn?.text = checkCard.rightBtnShow()
-
-                if(checkCard.easyButtonIndex == -1) {
-                    _binding?.easyBtn?.visibility = View.GONE
-                } else {
-                    _binding?.easyBtn?.visibility = View.VISIBLE
-                    _binding?.easyBtn?.text = checkCard.easyBtnShow()
-                }
+                _binding?.checkCard = it.data
+                _binding?.executePendingBindings()
             }
         })
 
@@ -70,19 +65,6 @@ class CheckFragment : Fragment() {
                 displayCardQuestion(it.data ?: "")
             }
         })
-
-        // 出错的Btn
-        binding.errorBtn.setOnClickListener {
-            viewModel.answerCardOnError()
-        }
-        // 正确的Btn
-        binding.rightBtn.setOnClickListener {
-            viewModel.answerCardOnRight()
-        }
-        // 容易的Btn
-        binding.easyBtn.setOnClickListener {
-            viewModel.answerCardOnEasy()
-        }
 
         // 获取参数
         val printId = arguments?.getInt(ARGUMENT_PRINT_ID, -1) ?: -1
