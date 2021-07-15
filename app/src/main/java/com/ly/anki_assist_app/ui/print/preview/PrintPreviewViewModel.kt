@@ -17,7 +17,7 @@ import timber.log.Timber
 import java.lang.Exception
 import java.util.*
 
-const val PRINT_CARD_MAX = 30
+const val PRINT_CARD_MAX = 50
 
 class PrintPreviewViewModel : ViewModel() {
 
@@ -40,12 +40,11 @@ class PrintPreviewViewModel : ViewModel() {
                     if(remainNums <= 0) {
                         break
                     }
-                    val nums = Math.min(planDeck.total, remainNums)
-                    val cards = CardApi.asynGetDueCards(planDeck.deckId, nums)
+                    val cards = CardApi.asynGetDueCards(planDeck.deckId, planDeck.total)
 
                     list.add(
                         PrintDeckCards(
-                            PrintDeck(planDeck.deckId, planDeck.name, nums),
+                            PrintDeck(planDeck.deckId, planDeck.name, cards.size),
                             cards
                         )
                     )
