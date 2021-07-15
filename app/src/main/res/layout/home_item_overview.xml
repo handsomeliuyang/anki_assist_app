@@ -41,22 +41,35 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="@{overView.getOverviewText()}"
+            android:text="@{overView.getDueDeckText()}"
             android:textAppearance="?attr/textAppearanceBody2"
             android:textColor="?android:attr/textColorPrimary"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/hint"
             tools:text="今日需学习 xxx 张"/>
 
-        <Button
+        <TextView
+            android:id="@+id/print_overview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="打印今日卡片"
-            android:id="@+id/print_btn"
-            android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@id/study_overview"
+            android:layout_marginTop="8dp"
+            android:text="@{overView.getPrintDeckText()}"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="?android:attr/textColorPrimary"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/study_overview"
+            tools:text="今日已打印复习 xxx 张"/>
+
+        <Button
+            android:id="@+id/print_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:enabled="@{overView.dueDeckList.isEmpty() ? false : true}"
+            android:text="打印今日卡片"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/print_overview" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

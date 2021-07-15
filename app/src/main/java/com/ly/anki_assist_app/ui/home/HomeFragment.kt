@@ -55,12 +55,12 @@ class HomeFragment : Fragment() {
             recyclerView.addItemDecoration(DividerItemDecoration(this@HomeFragment.context, DividerItemDecoration.VERTICAL))
         }
 
-        homeViewModel.dueOverview.observe(viewLifecycleOwner, Observer {
-            if (it.status == Status.SUCCESS) {
-                it.data?.let { overView ->
-                    (_binding?.recyclerView?.adapter as HomeAadpter?)?.updateOverview(overView)
-                }
-            }
+        homeViewModel.overView.observe(viewLifecycleOwner, Observer {
+//            if (it.status == Status.SUCCESS) {
+//                it.data?.let { overView ->
+            (_binding?.recyclerView?.adapter as HomeAadpter?)?.updateOverview(it)
+//                }
+//            }
         })
 
         homeViewModel.printList.observe(viewLifecycleOwner, Observer {

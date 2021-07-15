@@ -5,6 +5,7 @@ import android.text.Spanned
 import androidx.lifecycle.*
 import com.ly.anki_assist_app.ankidroid.api.DeckApi
 import com.ly.anki_assist_app.ankidroid.model.AnkiDeck
+import com.ly.anki_assist_app.printroom.DeckEntity
 import com.ly.anki_assist_app.printroom.PrintEntity
 import com.ly.anki_assist_app.printroom.PrintUtils
 import com.ly.anki_assist_app.utils.Resource
@@ -13,6 +14,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class HomeViewModel : ViewModel() {
     private val _checkResult = MutableLiveData<Boolean>(false)
@@ -25,19 +27,13 @@ class HomeViewModel : ViewModel() {
         _checkReason.value = checkReason
     }
 
-    val dueOverview = _checkResult.switchMap {checkResult ->
+    private val _dueAnkiDeck = _checkResult.switchMap {checkResult ->
         liveData {
             if(checkResult) {
                 val result = try {
                     // 查询所需要复习的卡片
                     val dueDeckList = DeckApi.asynGetDueDeckList()
-                    var reviewNumbs = 0
-                    var newNumbs = 0
-                    for (dueDeck in dueDeckList) {
-                        reviewNumbs += dueDeck.deckDueCounts.learnCount + dueDeck.deckDueCounts.reviewCount
-                        newNumbs += dueDeck.deckDueCounts.newCount
-                    }
-                    Resource.success(Overview(dueDeckList, reviewNumbs, newNumbs))
+                    Resource.success(dueDeckList)
                 } catch (e: Exception) {
                     Resource.error("加载出错", null)
                 }
@@ -71,20 +67,60 @@ class HomeViewModel : ViewModel() {
         }
     }
 
+    val overView:LiveData<Overview> = MediatorLiveData<Overview>().apply {
+        fun update(){
+            val dueDecks = _dueAnkiDeck.value?.data ?: return
+            val prints = printList.value?.data ?: emptyList()
+
+            val printDeckList = prints.flatMap {
+                it.printEntity.deckEntitys
+            }
+
+            val notPrintList = dueDecks.filter {
+                for (printDeck in printDeckList) {
+                    if(it.name == printDeck.name) {
+                        return@filter false
+                    }
+                }
+                return@filter true
+            }
+
+            value = Overview(notPrintList, printDeckList)
+        }
+        addSource(_dueAnkiDeck){update()}
+        addSource(printList){update()}
+    }
 }
 
 data class Overview(
     val dueDeckList: List<AnkiDeck>,
-    val reviewNums: Int,
-    val newNums: Int,
+    val printDeckList: List<DeckEntity>
 ) {
     companion object {
         fun empty(): Overview{
-            return Overview(emptyList(), 0, 0)
+            return Overview(emptyList(), emptyList())
         }
     }
-    fun getOverviewText(): Spanned {
-        return Html.fromHtml("今日需复习 <font color='#FF0000'>${reviewNums}</font> 张，需学习新卡片 <font color='#FF0000'>${newNums}</font> 张")
+    fun getDueDeckText(): Spanned {
+        if(dueDeckList.isEmpty()) {
+            return Html.fromHtml("今日已全部打印完，继续保持，加油！！！")
+        }
+
+        val list = dueDeckList.map {
+            "${it.name}(${it.deckDueCounts.getTotal()}张)"
+        }
+
+        return Html.fromHtml("今日还需打印复习 <font color='#FF0000'>${list.joinToString(" ")}</font>")
+    }
+    fun getPrintDeckText(): Spanned {
+        if(printDeckList.isEmpty()) {
+            return Html.fromHtml("今日已打印 <font color='#FF0000'>0</font> 张")
+        }
+
+        val list = printDeckList.map {
+            "${it.name}(${it.total}张)"
+        }
+        return Html.fromHtml("今日已打印 ${list.joinToString(" ")}")
     }
 }
 
