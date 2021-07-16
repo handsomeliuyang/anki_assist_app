@@ -87,7 +87,7 @@ class PrintPreviewViewModel : ViewModel() {
                             ankiCard.noteId,
                             ankiCard.cardOrd,
                             ankiCard.buttonCount,
-                            ankiCard.nextReviewTimesString,
+                            ankiCard.nextReviewTimes,
                             CardEntity.STUDY_STATE_INIT,
                             CardEntity.PARENT_STATE_INIT
                         )

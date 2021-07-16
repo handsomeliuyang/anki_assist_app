@@ -34,6 +34,7 @@
                 android:insetBottom="0dp"
                 app:backgroundTint="#FF3D00"
                 app:cornerRadius="0dp"
+                android:onClick="@{()-> checkViewModel.prevAction()}"
                 android:text="上一页" />
 
             <TextView
@@ -54,6 +55,7 @@
                 android:insetBottom="0dp"
                 app:backgroundTint="#FF3D00"
                 app:cornerRadius="0dp"
+                android:onClick="@{()-> checkViewModel.nextAction()}"
                 android:text="下一页" />
 
         </LinearLayout>

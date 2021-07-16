@@ -34,10 +34,12 @@ data class CardEntity(
     val noteId: Long,
     val cardOrd: Int,
     val buttonCount: Int,
-    val nextReviewTimesString: String,
+    val nextReviewTimes: List<String>,
 
     var studyState: Int,
-    var parentState: Int
+    var parentState: Int,
+    var answerButtonIndex: Int = -1,
+    var hasSyncAnki: Boolean = false
 ) {
     companion object {
         const val STUDY_STATE_INIT = 0

@@ -100,6 +100,12 @@ class CardApi {
             return ankiCard
         }
 
+        suspend fun asynGetQuestionAndAnswer(noteId: Long, cardOrd: Int): AnkiCardQA {
+            return withContext(Dispatchers.IO) {
+                return@withContext getQuestionAndAnswer(noteId, cardOrd)
+            }
+        }
+
         private fun getQuestionAndAnswer(noteId: Long, cardOrd: Int): AnkiCardQA {
             // 获取 Card 的 question 和 answer
             val ankiCardQA = AnkiCardQA("", "")
@@ -207,16 +213,16 @@ class CardApi {
         /**
          * 异步回答卡片
          */
-        suspend fun asynAnswerCard(card: AnkiCard, buttonCount: Int){
+        suspend fun asynAnswerCard(noteId: Long, cardOrd: Int, buttonCount: Int){
             withContext(Dispatchers.IO) {
-                answerCard(card, buttonCount)
+                answerCard(noteId, cardOrd, buttonCount)
             }
         }
 
-        private fun answerCard(card: AnkiCard, buttonCount: Int){
+        private fun answerCard(noteId: Long, cardOrd: Int, buttonCount: Int){
             val values = ContentValues()
-            values.put(FlashCardsContract.ReviewInfo.NOTE_ID, card.noteId)
-            values.put(FlashCardsContract.ReviewInfo.CARD_ORD, card.cardOrd)
+            values.put(FlashCardsContract.ReviewInfo.NOTE_ID, noteId)
+            values.put(FlashCardsContract.ReviewInfo.CARD_ORD, cardOrd)
             values.put(FlashCardsContract.ReviewInfo.EASE, buttonCount)
             values.put(FlashCardsContract.ReviewInfo.TIME_TAKEN, 5000)
 

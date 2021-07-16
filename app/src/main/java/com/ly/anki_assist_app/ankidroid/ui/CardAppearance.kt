@@ -8,7 +8,7 @@ import com.ly.anki_assist_app.utils.Utils
 class CardAppearance {
     companion object {
 
-        fun displayCheckString(card: AnkiCard?): String {
+        fun displayCheckString(answerContent: String): String {
             // 加载卡片布局模板
             val printTemplate = loadPrintTemplate()
 
@@ -23,7 +23,7 @@ class CardAppearance {
             content.append(
                 "<tr class=\"print_tr\">" +
                     "<td class=\"print_td\">" +
-                        card?.cardQA?.answerContent +
+                        answerContent +
                     "</td>" +
                 "</tr>"
             )

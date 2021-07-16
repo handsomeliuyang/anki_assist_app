@@ -34,27 +34,20 @@ class CheckFragment : Fragment() {
             this.lifecycleOwner = this@CheckFragment.viewLifecycleOwner
         }
 
-        viewModel.print.observe(viewLifecycleOwner, Observer {
+        viewModel.checkCardLiveData.observe(this.viewLifecycleOwner, Observer {
             if (it.status == Status.SUCCESS) {
-                viewModel.resetIndex()
-            }
-        })
-
-        viewModel.checkCard.observe(this.viewLifecycleOwner, Observer {
-            if (it.status == Status.SUCCESS) {
-                if (it.data == null) {
-                    // 检查结束
-                    val context = this.context ?: return@Observer
-                    MaterialAlertDialogBuilder(context)
-                        .setTitle("提示")
-                        .setMessage("已检查完，辛苦了！！！")
-                        .setPositiveButton("确定") { dialog, which ->
-                            this.findNavController().popBackStack()
-                        }
-                        .show()
-                    return@Observer
-                }
-
+//                if (it.data == null) {
+//                    // 检查结束
+//                    val context = this.context ?: return@Observer
+//                    MaterialAlertDialogBuilder(context)
+//                        .setTitle("提示")
+//                        .setMessage("已检查完，辛苦了！！！")
+//                        .setPositiveButton("确定") { dialog, which ->
+//                            this.findNavController().popBackStack()
+//                        }
+//                        .show()
+//                    return@Observer
+//                }
                 _binding?.checkCard = it.data
                 _binding?.executePendingBindings()
             }
