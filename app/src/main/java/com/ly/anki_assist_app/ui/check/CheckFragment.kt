@@ -15,6 +15,9 @@ import com.ly.anki_assist_app.databinding.FragmentCheckBinding
 import com.ly.anki_assist_app.printroom.CardEntity
 import com.ly.anki_assist_app.ui.home.ARGUMENT_PRINT_ID
 import com.ly.anki_assist_app.utils.Status
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class CheckFragment : Fragment() {
 
@@ -35,7 +38,8 @@ class CheckFragment : Fragment() {
         }
 
         viewModel.checkCardLiveData.observe(this.viewLifecycleOwner, Observer {
-            if (it.status == Status.SUCCESS) {
+            val checkCard = it.data ?: return@Observer
+//            if (it.status == Status.SUCCESS) {
 //                if (it.data == null) {
 //                    // 检查结束
 //                    val context = this.context ?: return@Observer
@@ -48,9 +52,9 @@ class CheckFragment : Fragment() {
 //                        .show()
 //                    return@Observer
 //                }
-                _binding?.checkCard = it.data
+                _binding?.checkCard = checkCard
                 _binding?.executePendingBindings()
-            }
+//            }
         })
 
         viewModel.checkCardString.observe(viewLifecycleOwner, Observer {
@@ -64,6 +68,13 @@ class CheckFragment : Fragment() {
         viewModel.setPrintId(printId)
 
         return binding.root
+    }
+
+    override fun onPause() {
+        super.onPause()
+        GlobalScope.launch {
+            viewModel.savePrint()
+        }
     }
 
     private fun displayCardQuestion(displayString: String) {

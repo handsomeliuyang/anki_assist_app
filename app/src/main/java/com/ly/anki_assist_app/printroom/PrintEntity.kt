@@ -36,19 +36,8 @@ data class CardEntity(
     val buttonCount: Int,
     val nextReviewTimes: List<String>,
 
-    var studyState: Int,
-    var parentState: Int,
-    var answerButtonIndex: Int = -1,
+    var answerEasy: Int = -1,
+    var hasStrengthenMemory: Boolean = false,
     var hasSyncAnki: Boolean = false
-) {
-    companion object {
-        const val STUDY_STATE_INIT = 0
-        const val STUDY_STATE_ERROR = 1
-        const val STUDY_STATE_RIGHT = 2
-
-        const val PARENT_STATE_INIT = 0
-        const val PARENT_STATE_CHECKED = 1
-        const val PARENT_STATE_COACH = 2
-    }
-}
+)
 

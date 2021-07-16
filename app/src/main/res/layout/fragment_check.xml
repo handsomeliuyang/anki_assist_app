@@ -22,20 +22,16 @@
         <LinearLayout
             android:id="@+id/process_layout"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="35dp"
             app:layout_constraintTop_toTopOf="parent"
-            android:background="#B3E5FC">
+            android:background="#E1F5FE">
 
-            <Button
-                android:id="@+id/before_btn"
-                android:layout_width="wrap_content"
+            <ImageButton
+                android:layout_width="45dp"
                 android:layout_height="match_parent"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:backgroundTint="#FF3D00"
-                app:cornerRadius="0dp"
-                android:onClick="@{()-> checkViewModel.prevAction()}"
-                android:text="上一页" />
+                android:src="@drawable/arrow_triangle_left"
+                android:scaleType="fitCenter"
+                android:onClick="@{()-> checkViewModel.prevAction()}"/>
 
             <TextView
                 android:id="@+id/process_text"
@@ -47,16 +43,13 @@
                 android:text="@{checkCard.processShow()}"
                 tools:text="5 / 20" />
 
-            <Button
-                android:id="@+id/next_btn"
-                android:layout_width="wrap_content"
+
+            <ImageButton
+                android:layout_width="45dp"
                 android:layout_height="match_parent"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                app:backgroundTint="#FF3D00"
-                app:cornerRadius="0dp"
                 android:onClick="@{()-> checkViewModel.nextAction()}"
-                android:text="下一页" />
+                android:scaleType="fitCenter"
+                android:src="@drawable/arrow_triangle_right" />
 
         </LinearLayout>
 
@@ -70,7 +63,7 @@
         <RelativeLayout
             android:id="@+id/answer_layout"
             android:layout_width="match_parent"
-            android:layout_height="84dip"
+            android:layout_height="48dp"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <LinearLayout
@@ -81,29 +74,48 @@
                 android:visibility="@{checkCard.isShowAnswerBtnLayout() ? View.VISIBLE : View.GONE}">
 
                 <Button
-                    android:id="@+id/error_btn"
+                    android:id="@+id/again_btn"
                     android:layout_width="0dip"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
-                    app:backgroundTint="#FF3D00"
+                    app:backgroundTint="#ffe53935"
                     app:cornerRadius="0dp"
-                    android:text="@{checkCard.errorBtnShow()}"
-                    android:onClick="@{()-> checkViewModel.answerCardOnError()}"
-                    tools:text="错误" />
+                    android:textSize="14sp"
+                    android:visibility="@{checkCard.answerButtons.get(0).visible}"
+                    android:text="@{checkCard.answerButtons.get(0).text}"
+                    android:onClick="@{()-> checkViewModel.answerCard(checkCard.answerButtons.get(0).easy)}"
+                    tools:text="重来"/>
 
                 <Button
-                    android:id="@+id/right_btn"
+                    android:id="@+id/hard_btn"
+                    android:layout_width="0dip"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:backgroundTint="#ff546e7a"
+                    app:cornerRadius="0dp"
+                    android:textSize="14sp"
+                    android:visibility="@{checkCard.answerButtons.get(1).visible}"
+                    android:text="@{checkCard.answerButtons.get(1).text}"
+                    android:onClick="@{()-> checkViewModel.answerCard(checkCard.answerButtons.get(1).easy)}"
+                    tools:text="困难" />
+
+                <Button
+                    android:id="@+id/good_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
-                    app:backgroundTint="#00E676"
+                    app:backgroundTint="#ff43a047"
                     app:cornerRadius="0dp"
-                    android:text="@{checkCard.rightBtnShow()}"
-                    android:onClick="@{()-> checkViewModel.answerCardOnRight()}"
-                    tools:text="正确" />
+                    android:textSize="14sp"
+                    android:visibility="@{checkCard.answerButtons.get(2).visible}"
+                    android:text="@{checkCard.answerButtons.get(2).text}"
+                    android:onClick="@{()-> checkViewModel.answerCard(checkCard.answerButtons.get(2).easy)}"
+                    tools:text="一般" />
 
                 <Button
                     android:id="@+id/easy_btn"
@@ -111,11 +123,12 @@
                     android:layout_height="match_parent"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
-                    app:backgroundTint="#00B0FF"
+                    app:backgroundTint="#ff039be5"
                     app:cornerRadius="0dp"
-                    android:text="@{checkCard.easyBtnShow()}"
-                    android:visibility="@{checkCard.easyButtonIndex == -1 ? View.GONE : View.VISIBLE}"
-                    android:onClick="@{()-> checkViewModel.answerCardOnEasy()}"
+                    android:textSize="14sp"
+                    android:visibility="@{checkCard.answerButtons.get(3).visible}"
+                    android:text="@{checkCard.answerButtons.get(3).text}"
+                    android:onClick="@{()-> checkViewModel.answerCard(checkCard.answerButtons.get(3).easy)}"
                     tools:text="简单" />
             </LinearLayout>
 
@@ -124,7 +137,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="@{checkCard.isShowAnswerBtnLayout() ? View.GONE : View.VISIBLE}"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                tools:visibility="visible"
+                android:background="#E1F5FE">
 
                 <TextView
                     android:layout_width="0dip"
@@ -132,18 +147,17 @@
                     android:layout_weight="1"
                     android:text="@{checkCard.getCheckMsg()}"
                     tools:text="测试信息"
-                    android:gravity="center"
-                    android:background="@android:color/white" />
+                    android:textColor="@android:color/black"
+                    android:gravity="center" />
 
-                <Button
-                    android:id="@+id/again_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    app:backgroundTint="#FF3D00"
-                    app:cornerRadius="0dp"
-                    android:text="重新检查" />
+                <ImageButton
+                    android:layout_width="45dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/again"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitCenter"
+                    android:onClick="@{()-> checkViewModel.resetAnswer()}"/>
+
             </LinearLayout>
         </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

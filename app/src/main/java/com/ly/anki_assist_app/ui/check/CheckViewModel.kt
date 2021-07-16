@@ -1,20 +1,19 @@
 package com.ly.anki_assist_app.ui.check
 
+import android.view.View
 import androidx.lifecycle.*
 import com.ly.anki_assist_app.ankidroid.api.CardApi
-import com.ly.anki_assist_app.ankidroid.model.AnkiCard
 import com.ly.anki_assist_app.ankidroid.model.AnkiCardQA
 import com.ly.anki_assist_app.ankidroid.ui.CardAppearance
 import com.ly.anki_assist_app.printroom.CardEntity
 import com.ly.anki_assist_app.printroom.DeckEntity
-import com.ly.anki_assist_app.printroom.PrintEntity
 import com.ly.anki_assist_app.printroom.PrintUtils
 import com.ly.anki_assist_app.utils.Resource
 import com.ly.anki_assist_app.utils.Status
 import kotlinx.coroutines.launch
 
 const val ACTION_NEXT = 1
-const val ACTION_NONE = 0
+const val ACTION_REFRESH = 0
 const val ACTION_PREV = -1
 
 class CheckViewModel : ViewModel() {
@@ -59,7 +58,7 @@ class CheckViewModel : ViewModel() {
                 curCardIndex = 0
             } else {
                 value?.data?.let {
-                    val action = _action.value ?: ACTION_NONE
+                    val action = _action.value ?: ACTION_REFRESH
                     when(action){
                         ACTION_NEXT -> {
                             curCardIndex++
@@ -137,23 +136,18 @@ class CheckViewModel : ViewModel() {
         emitAction(ACTION_NEXT)
     }
 
-    fun answerCardOnError() {
-        val index = checkCardLiveData.value?.data?.errorButtonIndex ?: return
-        answerCard(index, false)
+    suspend fun savePrint(){
+        val printEntity = print.value?.data ?: return
+        PrintUtils.asynUpdate(printEntity)
     }
 
-    fun answerCardOnRight() {
-        val index = checkCardLiveData.value?.data?.rightButtonIndex ?: return
-        answerCard(index, true)
+    fun resetAnswer(){
+        val cardEntity = checkCardLiveData.value?.data?.cardEntity ?: return
+        cardEntity.answerEasy = -1
+        emitAction(ACTION_REFRESH)
     }
 
-    fun answerCardOnEasy() {
-        val index = checkCardLiveData.value?.data?.easyButtonIndex ?: return
-        answerCard(index, true)
-    }
-
-    private fun answerCard(buttonIndex: Int, isRight: Boolean) {
-        if (buttonIndex == -1) return
+    fun answerCard(easy: Int){
         val cardEntity = checkCardLiveData.value?.data?.cardEntity ?: return
         val printEntity = print.value?.data ?: return
 
@@ -161,9 +155,8 @@ class CheckViewModel : ViewModel() {
             // TODO-ly 先修改Anki的状态
 //            CardApi.asynAnswerCard(cardEntity.noteId, cardEntity.cardOrd, buttonIndex)
 
-            // TODO-ly 再修改本地数据库的状态
-//            checkCard.cardEntity.studyState = if(isRight) CardEntity.STUDY_STATE_RIGHT else CardEntity.STUDY_STATE_ERROR
-//            checkCard.cardEntity.parentState = CardEntity.PARENT_STATE_CHECKED
+            // 再修改本地数据库的状态
+            cardEntity.answerEasy = easy
 //            PrintUtils.asynUpdate(printEntity)
 
             // 下一个
@@ -180,73 +173,54 @@ data class CheckCard(
     val deckEntity: DeckEntity,
     val cardEntity: CardEntity,
 
-    var errorButtonIndex: Int = 0,
-    var rightButtonIndex: Int = 0,
-    var easyButtonIndex: Int = 0,
+    val answerButtons: ArrayList<AnswerButton> = ArrayList(),
+    val easyButtonIndexMap: MutableMap<Int, Int> = mutableMapOf()
 ) {
     init {
-        val buttonCound = cardEntity.buttonCount
-        if(buttonCound == 2) {
-            errorButtonIndex = 0
-            rightButtonIndex = 1
-            easyButtonIndex = -1
-        } else if (buttonCound == 3) {
-            errorButtonIndex = 0
-            rightButtonIndex = 1
-            easyButtonIndex = 2
-        } else if(buttonCound == 4) {
-            // TODO-ly 缺乏一个识别逻辑，是否超过20
-            errorButtonIndex = 1
-            rightButtonIndex = 2
-            easyButtonIndex = 3
+        val buttonCount = cardEntity.buttonCount
+
+        if(buttonCount == 2) {
+            answerButtons.add(AnswerButton(View.VISIBLE, 1,cardEntity.nextReviewTimes.get(0) + '\n' + "重来"))
+            answerButtons.add(AnswerButton())
+            answerButtons.add(AnswerButton(View.VISIBLE,2,  cardEntity.nextReviewTimes.get(1) + '\n' + "一般"))
+            answerButtons.add(AnswerButton())
+            easyButtonIndexMap.put(1, 0)
+            easyButtonIndexMap.put(2, 2)
+        } else if (buttonCount == 3) {
+            answerButtons.add(AnswerButton(View.VISIBLE,1, cardEntity.nextReviewTimes.get(0) + '\n' + "重来"))
+            answerButtons.add(AnswerButton())
+            answerButtons.add(AnswerButton(View.VISIBLE,2, cardEntity.nextReviewTimes.get(1) + '\n' + "一般" ))
+            answerButtons.add(AnswerButton(View.VISIBLE,3, cardEntity.nextReviewTimes.get(2) + '\n' + "简单"))
+            easyButtonIndexMap.put(1, 0)
+            easyButtonIndexMap.put(2, 2)
+            easyButtonIndexMap.put(3, 3)
+        } else {
+            answerButtons.add(AnswerButton(View.VISIBLE,1,  cardEntity.nextReviewTimes.get(0) + '\n' + "重来"))
+            answerButtons.add(AnswerButton(View.VISIBLE,2,  cardEntity.nextReviewTimes.get(1) + '\n' + "困难"))
+            answerButtons.add(AnswerButton(View.VISIBLE,3,  cardEntity.nextReviewTimes.get(2) + '\n' + "一般"))
+            answerButtons.add(AnswerButton(View.VISIBLE,4, cardEntity.nextReviewTimes.get(3) + '\n' + "简单"))
+            easyButtonIndexMap.put(1, 0)
+            easyButtonIndexMap.put(2, 1)
+            easyButtonIndexMap.put(3, 2)
+            easyButtonIndexMap.put(3, 3)
         }
     }
     fun processShow(): String {
         return "${deckEntity.name}: ${cardIndex + 1} / ${deckEntity.cards.size}"
     }
-    fun errorBtnShow(): String {
-        if(errorButtonIndex == -1) {
-            return "错误\n异常"
-        }
 
-        if (cardEntity.buttonCount == 3 || cardEntity.buttonCount == 2) {
-            return "错误\n重来"
-        }
-        if(cardEntity.buttonCount == 4) {
-            return "错误\n<20天 困难 ${cardEntity.nextReviewTimes[1]}\n>20天 重来"
-        }
-        return "错误\n异常"
-    }
-    fun rightBtnShow(): String {
-        if(rightButtonIndex == -1) {
-            return "正确\n异常"
-        }
-
-        return "正确\n${cardEntity.nextReviewTimes[rightButtonIndex]}"
-    }
-    fun easyBtnShow(): String {
-        if(easyButtonIndex == -1) {
-            return "简单\n异常"
-        }
-        return "简单\n${cardEntity.nextReviewTimes[easyButtonIndex]}"
-    }
     fun isShowAnswerBtnLayout(): Boolean{
-        return cardEntity.parentState == CardEntity.PARENT_STATE_INIT
+        return cardEntity.answerEasy == -1
     }
+
     fun getCheckMsg(): String {
-
-        val studyResult = when(cardEntity.studyState) {
-            CardEntity.STUDY_STATE_ERROR -> "答题：错误"
-            CardEntity.STUDY_STATE_RIGHT -> "答题：正确"
-            else -> "答题中..."
-        }
-
-        val parentResult = when(cardEntity.parentState){
-            CardEntity.PARENT_STATE_CHECKED -> "家长已检查"
-            CardEntity.PARENT_STATE_COACH -> "此题已辅导"
-            else -> "待检验..."
-        }
-
-        return "${studyResult}\n${parentResult}"
+        val index = easyButtonIndexMap.get(cardEntity.answerEasy) ?: return "复习中..."
+        return answerButtons.get(index).text
     }
 }
+
+data class AnswerButton(
+    val visible: Int = View.GONE,
+    val easy: Int = -1,
+    val text: String = ""
+)
