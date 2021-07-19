@@ -2,14 +2,13 @@ package com.ly.anki_assist_app.ui.check
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.ankidroid.ui.MyWebView
 import com.ly.anki_assist_app.databinding.FragmentCheckBinding
 import com.ly.anki_assist_app.printroom.CardEntity
@@ -26,16 +25,25 @@ class CheckFragment : Fragment() {
 
     private val binding get() = _binding!!
 
+    private var _hasCheckAndSyncAnki: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
+
         viewModel = ViewModelProvider(this).get(CheckViewModel::class.java)
         _binding = FragmentCheckBinding.inflate(inflater, container, false).apply {
             this.checkViewModel = viewModel
             this.lifecycleOwner = this@CheckFragment.viewLifecycleOwner
         }
+
+        viewModel.print.observe(this.viewLifecycleOwner, Observer {
+            _hasCheckAndSyncAnki = it.data?.hasCheckAndSyncAnki ?: false
+            this.activity?.invalidateOptionsMenu()
+        })
 
         viewModel.checkCardLiveData.observe(this.viewLifecycleOwner, Observer {
             val checkCard = it.data ?: return@Observer
@@ -63,6 +71,11 @@ class CheckFragment : Fragment() {
             }
         })
 
+        // TODO-ly 监听同步状态，显示弹窗
+        viewModel.syncAnkiLivedata.observe(viewLifecycleOwner, Observer {
+
+        })
+
         // 获取参数
         val printId = arguments?.getInt(ARGUMENT_PRINT_ID, -1) ?: -1
         viewModel.setPrintId(printId)
@@ -88,5 +101,34 @@ class CheckFragment : Fragment() {
         )
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu.clear()
+        inflater.inflate(R.menu.check, menu)
+    }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        val finishItem = menu.findItem(R.id.action_check_finish)
+
+        if(_hasCheckAndSyncAnki) {
+            finishItem.setEnabled(false)
+            finishItem.setTitle("已检查")
+        } else {
+            finishItem.setEnabled(true)
+            finishItem.setTitle("完成")
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.action_check_finish -> checkFinish()
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun checkFinish(): Boolean {
+        // 同步数据库，同步Anki
+        viewModel.syncAnki()
+        return true
+    }
 }

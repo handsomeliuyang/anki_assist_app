@@ -32,6 +32,8 @@
     <!--打印页的配置-->
     <string name="action_print">打印</string>
 
+    <string name="action_check_finish">完成</string>
+
     <string name="action_options_ok">确认</string>
 
 </resources>

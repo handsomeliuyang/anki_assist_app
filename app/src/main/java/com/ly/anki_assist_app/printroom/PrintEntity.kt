@@ -13,7 +13,9 @@ data class PrintEntity(
     val name: String,
     val time: Date?,
     val state: Int?,
-    val deckEntitys: List<DeckEntity>
+    val deckEntitys: List<DeckEntity>,
+    var hasCheckAndSyncAnki: Boolean = false,
+    var hasCoach: Boolean = false
 ) {
 
     companion object {
@@ -37,7 +39,7 @@ data class CardEntity(
     val nextReviewTimes: List<String>,
 
     var answerEasy: Int = -1,
-    var hasStrengthenMemory: Boolean = false,
-    var hasSyncAnki: Boolean = false
+    var hasStrengthenMemory: Boolean = false
+//    var hasSyncAnki: Boolean = false
 )
 

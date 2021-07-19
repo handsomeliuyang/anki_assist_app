@@ -163,6 +163,46 @@ class CheckViewModel : ViewModel() {
             emitAction(ACTION_NEXT)
         }
     }
+
+
+    private val _syncAnkiLiveData = MutableLiveData<Resource<Boolean>>()
+    val syncAnkiLivedata: LiveData<Resource<Boolean>> = _syncAnkiLiveData
+    fun syncAnki() {
+        val printEntity = print.value?.data ?: return
+
+        if (printEntity.hasCheckAndSyncAnki) {
+            return
+        }
+
+        val noneAnswerDecks = printEntity.deckEntitys.flatMap {
+            it.cards
+        }.filter {
+            it.answerEasy == -1
+        }
+
+        if (noneAnswerDecks.size > 0) {
+            // 还有未完成的卡片
+            _syncAnkiLiveData.value = Resource.error("${noneAnswerDecks.size} 张卡片未检查", null)
+            return
+        }
+
+        _syncAnkiLiveData.value = Resource.loading("同步中...", null)
+
+        viewModelScope.launch {
+            // 先同步Anki
+            val results = printEntity.deckEntitys.flatMap {
+                it.cards
+            }.map {
+                CardApi.asynAnswerCard(it.noteId, it.cardOrd, it.answerEasy)
+            }
+
+            // 修改本地数据库的状态
+            printEntity.hasCheckAndSyncAnki = true
+            savePrint()
+
+            _syncAnkiLiveData.value = Resource.success(true)
+        }
+    }
 }
 
 data class CheckCard(

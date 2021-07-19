@@ -213,20 +213,20 @@ class CardApi {
         /**
          * 异步回答卡片
          */
-        suspend fun asynAnswerCard(noteId: Long, cardOrd: Int, buttonCount: Int){
-            withContext(Dispatchers.IO) {
-                answerCard(noteId, cardOrd, buttonCount)
+        suspend fun asynAnswerCard(noteId: Long, cardOrd: Int, easy: Int): Int{
+            return withContext(Dispatchers.IO) {
+                return@withContext answerCard(noteId, cardOrd, easy)
             }
         }
 
-        private fun answerCard(noteId: Long, cardOrd: Int, buttonCount: Int){
+        private fun answerCard(noteId: Long, cardOrd: Int, easy: Int): Int{
             val values = ContentValues()
             values.put(FlashCardsContract.ReviewInfo.NOTE_ID, noteId)
             values.put(FlashCardsContract.ReviewInfo.CARD_ORD, cardOrd)
-            values.put(FlashCardsContract.ReviewInfo.EASE, buttonCount)
+            values.put(FlashCardsContract.ReviewInfo.EASE, easy)
             values.put(FlashCardsContract.ReviewInfo.TIME_TAKEN, 5000)
 
-            App.context.contentResolver.update(
+            return App.context.contentResolver.update(
                 FlashCardsContract.ReviewInfo.CONTENT_URI,
                 values,
                 null,
