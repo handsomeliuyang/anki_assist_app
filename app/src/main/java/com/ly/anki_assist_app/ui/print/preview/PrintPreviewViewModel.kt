@@ -102,7 +102,6 @@ class PrintPreviewViewModel : ViewModel() {
                     0,
                     printName,
                     Date(),
-                    PrintEntity.STATE_NONE_CHECK,
                     deckEntitys
                 )
 

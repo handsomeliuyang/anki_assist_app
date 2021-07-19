@@ -26,6 +26,7 @@
     <string name="home_card_overview_title">今日概览</string>
     <string name="home_card_overview_secondary_text">显示今日复习量和学习量</string>
 
+    <string name="home_card_has_check_btn">已检查</string>
     <string name="home_card_check_btn">家长检查</string>
     <string name="home_card_coach_btn">辅导错题</string>
 

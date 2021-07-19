@@ -132,12 +132,13 @@ data class PrintItem(
         return sdf.format(printEntity.time)
     }
     fun getStateText(): String{
-        return when(printEntity.state) {
-            PrintEntity.STATE_NONE_CHECK -> "未检查"
-            PrintEntity.STATE_NONE_COACH -> "未辅导"
-            PrintEntity.STATE_FINISHED -> "完成"
-            else -> "异常"
+        if(!printEntity.hasCheckAndSyncAnki) {
+            return "未检查"
         }
+        if(!printEntity.hasCoach) {
+            return "未辅导"
+        }
+        return "完成"
     }
     fun getPrintInfo(): String {
         val about = printEntity.deckEntitys.map {

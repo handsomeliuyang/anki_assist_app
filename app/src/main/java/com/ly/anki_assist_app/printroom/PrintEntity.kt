@@ -12,18 +12,10 @@ data class PrintEntity(
     val id: Int,
     val name: String,
     val time: Date?,
-    val state: Int?,
     val deckEntitys: List<DeckEntity>,
     var hasCheckAndSyncAnki: Boolean = false,
     var hasCoach: Boolean = false
-) {
-
-    companion object {
-        const val STATE_NONE_CHECK = 1
-        const val STATE_NONE_COACH = 2
-        const val STATE_FINISHED = 3
-    }
-}
+)
 
 data class DeckEntity(
     val deckId: Long,
