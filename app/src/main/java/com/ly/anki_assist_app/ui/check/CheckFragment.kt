@@ -3,6 +3,7 @@ package com.ly.anki_assist_app.ui.check
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
@@ -47,22 +48,8 @@ class CheckFragment : Fragment() {
 
         viewModel.checkCardLiveData.observe(this.viewLifecycleOwner, Observer {
             val checkCard = it.data ?: return@Observer
-//            if (it.status == Status.SUCCESS) {
-//                if (it.data == null) {
-//                    // 检查结束
-//                    val context = this.context ?: return@Observer
-//                    MaterialAlertDialogBuilder(context)
-//                        .setTitle("提示")
-//                        .setMessage("已检查完，辛苦了！！！")
-//                        .setPositiveButton("确定") { dialog, which ->
-//                            this.findNavController().popBackStack()
-//                        }
-//                        .show()
-//                    return@Observer
-//                }
-                _binding?.checkCard = checkCard
-                _binding?.executePendingBindings()
-//            }
+            _binding?.checkCard = checkCard
+            _binding?.executePendingBindings()
         })
 
         viewModel.checkCardString.observe(viewLifecycleOwner, Observer {
@@ -71,9 +58,13 @@ class CheckFragment : Fragment() {
             }
         })
 
-        // TODO-ly 监听同步状态，显示弹窗
+        // 监听同步状态，显示弹窗
         viewModel.syncAnkiLivedata.observe(viewLifecycleOwner, Observer {
-
+            when(it.status){
+                Status.ERROR -> showSyncError(it.message?:"")
+                Status.LOADING -> showSyncLoading()
+                Status.SUCCESS -> showSyncSuccess()
+            }
         })
 
         // 获取参数
@@ -81,6 +72,47 @@ class CheckFragment : Fragment() {
         viewModel.setPrintId(printId)
 
         return binding.root
+    }
+
+    private var _syncAlertDialog: AlertDialog? = null
+
+    private fun showSyncSuccess() {
+        val context = this.context ?: return
+        if (_syncAlertDialog?.isShowing == true) {
+            _syncAlertDialog?.dismiss()
+        }
+        _syncAlertDialog = MaterialAlertDialogBuilder(context)
+            .setTitle("成功")
+            .setMessage("检查完成，同步成功！！！")
+            .setPositiveButton("确定") { dialog, which ->
+                this.findNavController().popBackStack()
+            }
+            .show()
+    }
+
+    private fun showSyncLoading() {
+        val context = this.context ?: return
+        if (_syncAlertDialog?.isShowing == true) {
+            _syncAlertDialog?.dismiss()
+        }
+        _syncAlertDialog = AlertDialog.Builder(context)
+            .setView(R.layout.dialog_loading)
+            .setCancelable(true)
+            .show()
+    }
+
+    private fun showSyncError(errorMsg: String) {
+        val context = this.context ?: return
+        if (_syncAlertDialog?.isShowing == true) {
+            _syncAlertDialog?.dismiss()
+        }
+        _syncAlertDialog = MaterialAlertDialogBuilder(context)
+            .setTitle("错误")
+            .setMessage(errorMsg)
+            .setPositiveButton("确定") { dialog, which ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun onPause() {

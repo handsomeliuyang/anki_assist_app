@@ -10,6 +10,7 @@ import com.ly.anki_assist_app.printroom.DeckEntity
 import com.ly.anki_assist_app.printroom.PrintUtils
 import com.ly.anki_assist_app.utils.Resource
 import com.ly.anki_assist_app.utils.Status
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 const val ACTION_NEXT = 1
@@ -180,7 +181,7 @@ class CheckViewModel : ViewModel() {
             it.answerEasy == -1
         }
 
-        if (noneAnswerDecks.size > 0) {
+        if (noneAnswerDecks.isNotEmpty()) {
             // 还有未完成的卡片
             _syncAnkiLiveData.value = Resource.error("${noneAnswerDecks.size} 张卡片未检查", null)
             return
@@ -188,7 +189,12 @@ class CheckViewModel : ViewModel() {
 
         _syncAnkiLiveData.value = Resource.loading("同步中...", null)
 
+
+
         viewModelScope.launch {
+
+            delay(3000)
+
             // 先同步Anki
             val results = printEntity.deckEntitys.flatMap {
                 it.cards

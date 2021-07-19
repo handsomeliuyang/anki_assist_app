@@ -156,6 +156,7 @@
                     android:src="@drawable/again"
                     android:layout_gravity="center_vertical"
                     android:scaleType="fitCenter"
+                    android:visibility="@{checkViewModel.print.data.hasCheckAndSyncAnki ? View.GONE : View.VISIBLE}"
                     android:onClick="@{()-> checkViewModel.resetAnswer()}"/>
 
             </LinearLayout>
