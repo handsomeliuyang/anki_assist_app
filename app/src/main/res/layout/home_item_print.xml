@@ -76,7 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/home_card_coach_btn"
-            android:enabled="@{printItem.printEntity.hasCheckAndSyncAnki ? true : false}"
+            android:enabled="@{printItem.getEnable()}"
             android:layout_marginStart="20dip"
             app:layout_constraintBaseline_toBaselineOf="@id/check_btn"
             app:layout_constraintLeft_toRightOf="@id/check_btn"

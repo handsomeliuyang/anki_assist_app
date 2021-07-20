@@ -7,17 +7,17 @@
     <data>
         <import type="android.view.View"/>
         <variable
-            name="checkCard"
-            type="com.ly.anki_assist_app.ui.check.CheckCard" />
+            name="uiCard"
+            type="com.ly.anki_assist_app.ui.card.UICard" />
         <variable
             name="checkViewModel"
-            type="com.ly.anki_assist_app.ui.check.CheckViewModel" />
+            type="com.ly.anki_assist_app.ui.card.check.CheckViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.check.CheckFragment">
+        tools:context=".ui.card.check.CheckFragment">
 
         <LinearLayout
             android:id="@+id/process_layout"
@@ -40,7 +40,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:textColor="@android:color/holo_red_light"
-                android:text="@{checkCard.processShow()}"
+                android:text="@{uiCard.processShow(checkViewModel.getUICardsCount())}"
                 tools:text="5 / 20" />
 
 
@@ -71,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="84dp"
                 android:orientation="horizontal"
-                android:visibility="@{checkCard.isShowAnswerBtnLayout() ? View.VISIBLE : View.GONE}">
+                android:visibility="@{uiCard.isShowAnswerBtnLayout() ? View.VISIBLE : View.GONE}">
 
                 <Button
                     android:id="@+id/again_btn"
@@ -83,9 +83,9 @@
                     app:backgroundTint="#ffe53935"
                     app:cornerRadius="0dp"
                     android:textSize="14sp"
-                    android:visibility="@{checkCard.answerButtons.get(0).visible}"
-                    android:text="@{checkCard.answerButtons.get(0).text}"
-                    android:onClick="@{()-> checkViewModel.answerCard(checkCard.answerButtons.get(0).easy)}"
+                    android:visibility="@{uiCard.answerButtons.get(0).visible}"
+                    android:text="@{uiCard.answerButtons.get(0).text}"
+                    android:onClick="@{()-> checkViewModel.answerCard(uiCard.answerButtons.get(0).easy)}"
                     tools:text="重来"/>
 
                 <Button
@@ -98,9 +98,9 @@
                     app:backgroundTint="#ff546e7a"
                     app:cornerRadius="0dp"
                     android:textSize="14sp"
-                    android:visibility="@{checkCard.answerButtons.get(1).visible}"
-                    android:text="@{checkCard.answerButtons.get(1).text}"
-                    android:onClick="@{()-> checkViewModel.answerCard(checkCard.answerButtons.get(1).easy)}"
+                    android:visibility="@{uiCard.answerButtons.get(1).visible}"
+                    android:text="@{uiCard.answerButtons.get(1).text}"
+                    android:onClick="@{()-> checkViewModel.answerCard(uiCard.answerButtons.get(1).easy)}"
                     tools:text="困难" />
 
                 <Button
@@ -112,9 +112,9 @@
                     app:backgroundTint="#ff43a047"
                     app:cornerRadius="0dp"
                     android:textSize="14sp"
-                    android:visibility="@{checkCard.answerButtons.get(2).visible}"
-                    android:text="@{checkCard.answerButtons.get(2).text}"
-                    android:onClick="@{()-> checkViewModel.answerCard(checkCard.answerButtons.get(2).easy)}"
+                    android:visibility="@{uiCard.answerButtons.get(2).visible}"
+                    android:text="@{uiCard.answerButtons.get(2).text}"
+                    android:onClick="@{()-> checkViewModel.answerCard(uiCard.answerButtons.get(2).easy)}"
                     tools:text="一般" />
 
                 <Button
@@ -126,9 +126,9 @@
                     app:backgroundTint="#ff039be5"
                     app:cornerRadius="0dp"
                     android:textSize="14sp"
-                    android:visibility="@{checkCard.answerButtons.get(3).visible}"
-                    android:text="@{checkCard.answerButtons.get(3).text}"
-                    android:onClick="@{()-> checkViewModel.answerCard(checkCard.answerButtons.get(3).easy)}"
+                    android:visibility="@{uiCard.answerButtons.get(3).visible}"
+                    android:text="@{uiCard.answerButtons.get(3).text}"
+                    android:onClick="@{()-> checkViewModel.answerCard(uiCard.answerButtons.get(3).easy)}"
                     tools:text="简单" />
             </LinearLayout>
 
@@ -136,7 +136,7 @@
                 android:id="@+id/answer_msg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="@{checkCard.isShowAnswerBtnLayout() ? View.GONE : View.VISIBLE}"
+                android:visibility="@{uiCard.isShowAnswerBtnLayout() ? View.GONE : View.VISIBLE}"
                 android:orientation="horizontal"
                 tools:visibility="visible"
                 android:background="#E1F5FE">
@@ -145,7 +145,7 @@
                     android:layout_width="0dip"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="@{checkCard.getCheckMsg()}"
+                    android:text="@{uiCard.getCheckMsg()}"
                     tools:text="测试信息"
                     android:textColor="@android:color/black"
                     android:gravity="center" />
@@ -156,7 +156,7 @@
                     android:src="@drawable/again"
                     android:layout_gravity="center_vertical"
                     android:scaleType="fitCenter"
-                    android:visibility="@{checkViewModel.print.data.hasCheckAndSyncAnki ? View.GONE : View.VISIBLE}"
+                    android:visibility="@{checkViewModel.printLiveData.data.hasCheckAndSyncAnki ? View.GONE : View.VISIBLE}"
                     android:onClick="@{()-> checkViewModel.resetAnswer()}"/>
 
             </LinearLayout>

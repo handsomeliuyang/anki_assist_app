@@ -40,14 +40,14 @@
 
     <fragment
         android:id="@+id/nav_check"
-        android:name="com.ly.anki_assist_app.ui.check.CheckFragment"
+        android:name="com.ly.anki_assist_app.ui.card.check.CheckFragment"
         android:label="家长检查"
         tools:layout="@layout/fragment_check">
     </fragment>
 
     <fragment
         android:id="@+id/nav_coach"
-        android:name="com.ly.anki_assist_app.ui.coach.CoachFragment"
+        android:name="com.ly.anki_assist_app.ui.card.coach.CoachFragment"
         android:label="辅导错题"
         tools:layout="@layout/fragment_coach">
     </fragment>

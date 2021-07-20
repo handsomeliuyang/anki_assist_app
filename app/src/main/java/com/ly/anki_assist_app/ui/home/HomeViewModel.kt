@@ -135,10 +135,22 @@ data class PrintItem(
         if(!printEntity.hasCheckAndSyncAnki) {
             return "未检查"
         }
-        if(!printEntity.hasCoach) {
+        if(printEntity.strengthenMemoryCounts <= 0) {
+            return "完成"
+        }
+        if(!printEntity.hasStrengthenMemory) {
             return "未辅导"
         }
         return "完成"
+    }
+    fun getEnable(): Boolean {
+        if (!printEntity.hasCheckAndSyncAnki) {
+            return false
+        }
+        if(printEntity.strengthenMemoryCounts <= 0) {
+            return false
+        }
+        return true
     }
     fun getPrintInfo(): String {
         val about = printEntity.deckEntitys.map {

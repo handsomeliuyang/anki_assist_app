@@ -1,4 +1,4 @@
-package com.ly.anki_assist_app.ui.check
+package com.ly.anki_assist_app.ui.card.check
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -6,18 +6,16 @@ import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.ankidroid.ui.MyWebView
 import com.ly.anki_assist_app.databinding.FragmentCheckBinding
-import com.ly.anki_assist_app.printroom.CardEntity
 import com.ly.anki_assist_app.ui.home.ARGUMENT_PRINT_ID
 import com.ly.anki_assist_app.utils.Status
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class CheckFragment : Fragment() {
 
@@ -34,32 +32,31 @@ class CheckFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
-
         viewModel = ViewModelProvider(this).get(CheckViewModel::class.java)
         _binding = FragmentCheckBinding.inflate(inflater, container, false).apply {
             this.checkViewModel = viewModel
             this.lifecycleOwner = this@CheckFragment.viewLifecycleOwner
         }
 
-        viewModel.print.observe(this.viewLifecycleOwner, Observer {
+        viewModel.printLiveData.observe(this.viewLifecycleOwner, Observer {
             _hasCheckAndSyncAnki = it.data?.hasCheckAndSyncAnki ?: false
             this.activity?.invalidateOptionsMenu()
         })
 
-        viewModel.checkCardLiveData.observe(this.viewLifecycleOwner, Observer {
-            val checkCard = it.data ?: return@Observer
-            _binding?.checkCard = checkCard
+        viewModel.curUICardLiveData.observe(this.viewLifecycleOwner, Observer {
+            val uiCard = it.data ?: return@Observer
+            _binding?.uiCard = uiCard
             _binding?.executePendingBindings()
         })
 
-        viewModel.checkCardString.observe(viewLifecycleOwner, Observer {
+        viewModel.curUICardString.observe(this.viewLifecycleOwner, Observer {
             if(it.status == Status.SUCCESS) {
                 displayCardQuestion(it.data ?: "")
             }
         })
 
         // 监听同步状态，显示弹窗
-        viewModel.syncAnkiLivedata.observe(viewLifecycleOwner, Observer {
+        viewModel.syncAnkiLivedata.observe(this.viewLifecycleOwner, Observer {
             when(it.status){
                 Status.ERROR -> showSyncError(it.message?:"")
                 Status.LOADING -> showSyncLoading()

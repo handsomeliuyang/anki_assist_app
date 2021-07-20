@@ -1,4 +1,4 @@
-package com.ly.anki_assist_app.ui.check
+package com.ly.anki_assist_app.ui.card
 
 import android.view.View
 import androidx.lifecycle.*
@@ -7,31 +7,29 @@ import com.ly.anki_assist_app.ankidroid.model.AnkiCardQA
 import com.ly.anki_assist_app.ankidroid.ui.CardAppearance
 import com.ly.anki_assist_app.printroom.CardEntity
 import com.ly.anki_assist_app.printroom.DeckEntity
+import com.ly.anki_assist_app.printroom.PrintEntity
 import com.ly.anki_assist_app.printroom.PrintUtils
 import com.ly.anki_assist_app.utils.Resource
 import com.ly.anki_assist_app.utils.Status
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import timber.log.Timber
 
 const val ACTION_NEXT = 1
 const val ACTION_REFRESH = 0
 const val ACTION_PREV = -1
 
-class CheckViewModel : ViewModel() {
-
+abstract class BaseCardViewModel() : ViewModel() {
     private val _printId = MutableLiveData<Int>()
-
     fun setPrintId(printId: Int) {
         _printId.value = printId
     }
-
-    val print = _printId.switchMap { printId ->
+    val printLiveData = _printId.switchMap { printId ->
         liveData {
             if(printId != -1) {
                 val result = try {
                     val printEntity = PrintUtils.asynGetPrintById(printId)
                     Resource.success(printEntity)
                 } catch (e: Exception) {
+                    Timber.e(e)
                     Resource.error(e.message ?: "", null)
                 }
                 emit(result)
@@ -41,44 +39,46 @@ class CheckViewModel : ViewModel() {
         }
     }
 
+    val uiCardsLiveData: LiveData<Resource<List<UICard>>> = printLiveData.switchMap {
+        liveData {
+            val printEntity = it.data ?: return@liveData emit(Resource.error("no print data", null))
+
+            val checkCards = printEntityToUICard(printEntity)
+
+            emit(Resource.success(checkCards))
+        }
+    }
+
+    abstract fun printEntityToUICard(printEntity: PrintEntity): List<UICard>
 
     private val _action = MutableLiveData<Int>()
-    private fun emitAction(action: Int){
+//    val action: LiveData<Int> = _action
+    fun emitAction(action: Int){
         _action.value = action
     }
 
-    val checkCardLiveData: LiveData<Resource<CheckCard>> = MediatorLiveData<Resource<CheckCard>>().apply {
+    val curUICardLiveData: LiveData<Resource<UICard>> = MediatorLiveData<Resource<UICard>>().apply {
         fun update(isReset: Boolean){
-            val printEntity = print.value?.data ?: return
+            val uiCardCards = uiCardsLiveData.value?.data ?: return
 
-            var curDeckIndex = value?.data?.deckIndex ?: 0
-            var curCardIndex = value?.data?.cardIndex ?: 0
+            var curIndex = value?.data?.curIndex ?: 0
 
             if(isReset) {
-                curCardIndex = 0
-                curCardIndex = 0
+                curIndex = 0
             } else {
                 value?.data?.let {
                     val action = _action.value ?: ACTION_REFRESH
                     when(action){
                         ACTION_NEXT -> {
-                            curCardIndex++
-                            if(curCardIndex >= printEntity.deckEntitys.get(curDeckIndex).cards.size) {
-                                curCardIndex = 0
-                                curDeckIndex ++
-                            }
-                            if(curDeckIndex >= printEntity.deckEntitys.size) {
+                            curIndex++
+                            if(curIndex >= uiCardCards.size) {
                                 value = Resource.error("Index has end", value?.data)
                                 return
                             }
                         }
                         ACTION_PREV -> {
-                            curCardIndex--
-                            if(curCardIndex < 0) {
-                                curCardIndex = 0
-                                curDeckIndex --
-                            }
-                            if(curDeckIndex < 0) {
+                            curIndex--
+                            if(curIndex < 0) {
                                 value = Resource.error("Index has begin", value?.data)
                                 return
                             }
@@ -88,24 +88,14 @@ class CheckViewModel : ViewModel() {
                 }
             }
 
-            val deckEntity = printEntity.deckEntitys.get(curDeckIndex)
-            val cardEntity = deckEntity.cards.get(curCardIndex)
-
-            value = Resource.success(
-                CheckCard(
-                    curDeckIndex,
-                    curCardIndex,
-                    deckEntity,
-                    cardEntity
-                )
-            )
+            value = Resource.success(uiCardCards.get(curIndex))
         }
 
         addSource(_action) {update(false)}
-        addSource(print){update(true)}
+        addSource(uiCardsLiveData){update(true)}
     }
 
-    val checkCardString = checkCardLiveData.switchMap { resource ->
+    val curUICardString = curUICardLiveData.switchMap { resource ->
         liveData<Resource<String>> {
             if (resource.status == Status.ERROR) {
                 emit(Resource.error(resource.message ?: "Error", null))
@@ -137,84 +127,20 @@ class CheckViewModel : ViewModel() {
         emitAction(ACTION_NEXT)
     }
 
+    fun getUICardsCount(): Int {
+        return uiCardsLiveData.value?.data?.size ?: 0
+    }
+
     suspend fun savePrint(){
-        val printEntity = print.value?.data ?: return
+        val printEntity = printLiveData.value?.data ?: return
         PrintUtils.asynUpdate(printEntity)
     }
 
-    fun resetAnswer(){
-        val cardEntity = checkCardLiveData.value?.data?.cardEntity ?: return
-        cardEntity.answerEasy = -1
-        emitAction(ACTION_REFRESH)
-    }
-
-    fun answerCard(easy: Int){
-        val cardEntity = checkCardLiveData.value?.data?.cardEntity ?: return
-        val printEntity = print.value?.data ?: return
-
-        viewModelScope.launch {
-            // TODO-ly 先修改Anki的状态
-//            CardApi.asynAnswerCard(cardEntity.noteId, cardEntity.cardOrd, buttonIndex)
-
-            // 再修改本地数据库的状态
-            cardEntity.answerEasy = easy
-//            PrintUtils.asynUpdate(printEntity)
-
-            // 下一个
-            emitAction(ACTION_NEXT)
-        }
-    }
-
-
-    private val _syncAnkiLiveData = MutableLiveData<Resource<Boolean>>()
-    val syncAnkiLivedata: LiveData<Resource<Boolean>> = _syncAnkiLiveData
-    fun syncAnki() {
-        val printEntity = print.value?.data ?: return
-
-        if (printEntity.hasCheckAndSyncAnki) {
-            return
-        }
-
-        val noneAnswerDecks = printEntity.deckEntitys.flatMap {
-            it.cards
-        }.filter {
-            it.answerEasy == -1
-        }
-
-        if (noneAnswerDecks.isNotEmpty()) {
-            // 还有未完成的卡片
-            _syncAnkiLiveData.value = Resource.error("${noneAnswerDecks.size} 张卡片未检查", null)
-            return
-        }
-
-        _syncAnkiLiveData.value = Resource.loading("同步中...", null)
-
-
-
-        viewModelScope.launch {
-
-            delay(3000)
-
-            // 先同步Anki
-            val results = printEntity.deckEntitys.flatMap {
-                it.cards
-            }.map {
-                CardApi.asynAnswerCard(it.noteId, it.cardOrd, it.answerEasy)
-            }
-
-            // 修改本地数据库的状态
-            printEntity.hasCheckAndSyncAnki = true
-            savePrint()
-
-            _syncAnkiLiveData.value = Resource.success(true)
-        }
-    }
 }
 
-data class CheckCard(
-    // 下标
-    val deckIndex: Int,
-    val cardIndex: Int,
+data class UICard(
+    var curIndex: Int = -1,
+
     // 当前结点对象
     val deckEntity: DeckEntity,
     val cardEntity: CardEntity,
@@ -248,20 +174,27 @@ data class CheckCard(
             easyButtonIndexMap.put(1, 0)
             easyButtonIndexMap.put(2, 1)
             easyButtonIndexMap.put(3, 2)
-            easyButtonIndexMap.put(3, 3)
+            easyButtonIndexMap.put(4, 3)
         }
-    }
-    fun processShow(): String {
-        return "${deckEntity.name}: ${cardIndex + 1} / ${deckEntity.cards.size}"
-    }
-
-    fun isShowAnswerBtnLayout(): Boolean{
-        return cardEntity.answerEasy == -1
     }
 
     fun getCheckMsg(): String {
         val index = easyButtonIndexMap.get(cardEntity.answerEasy) ?: return "复习中..."
         return answerButtons.get(index).text
+    }
+
+    fun processShow(total: Int): String{
+        return "${curIndex + 1} / ${total} ${deckEntity.name}"
+    }
+
+    fun needCoach():Boolean {
+        // 针对 重复 和 困难 需要加强一下记忆
+        val index = easyButtonIndexMap.get(cardEntity.answerEasy) ?: return false
+        return index <= 1
+    }
+
+    fun isShowAnswerBtnLayout(): Boolean{
+        return cardEntity.answerEasy == -1
     }
 }
 

@@ -14,14 +14,16 @@ data class PrintEntity(
     val time: Date?,
     val deckEntitys: List<DeckEntity>,
     var hasCheckAndSyncAnki: Boolean = false,
-    var hasCoach: Boolean = false
+
+    var strengthenMemoryCounts: Int = 0,
+    var hasStrengthenMemory: Boolean = false
 )
 
 data class DeckEntity(
     val deckId: Long,
     val name: String,
     val total: Int,
-    val cards: List<CardEntity>
+    var cards: List<CardEntity>
 )
 
 data class CardEntity(
@@ -32,6 +34,5 @@ data class CardEntity(
 
     var answerEasy: Int = -1,
     var hasStrengthenMemory: Boolean = false
-//    var hasSyncAnki: Boolean = false
 )
 

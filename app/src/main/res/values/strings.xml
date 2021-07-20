@@ -28,7 +28,7 @@
 
     <string name="home_card_has_check_btn">已检查</string>
     <string name="home_card_check_btn">家长检查</string>
-    <string name="home_card_coach_btn">辅导错题</string>
+    <string name="home_card_coach_btn">加强记忆</string>
 
     <!--打印页的配置-->
     <string name="action_print">打印</string>
