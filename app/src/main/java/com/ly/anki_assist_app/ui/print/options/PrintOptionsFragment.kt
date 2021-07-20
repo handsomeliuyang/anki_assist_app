@@ -53,20 +53,21 @@ class PrintOptionsFragment : Fragment() {
     private fun navPrintPreview(): Boolean {
 
         val deckAdapter = binding.recyclerView.adapter as DeckAadpter
-
-        val printDecks = ArrayList<PrintDeck>()
-        deckAdapter.parentList
+        val parentPrintDecks = deckAdapter.parentList
             .filter { it.checked }
-            .map { deckParent ->
-                printDecks.add(PrintDeck.from(deckParent.deck))
-                deckParent.children
-                    .filter { it.checked }
-                    .map { deckChild ->
-                        printDecks.add(PrintDeck.from(deckChild.deck))
-                    }
+            .map {
+                PrintDeck.from(it.deck)
+            }
+        val childPrintDecks = deckAdapter.parentList
+            .flatMap { it.children }
+            .filter { it.checked }
+            .map {
+                PrintDeck.from(it.deck)
             }
 
-        Timber.d("printDecks %s", printDecks)
+        val printDecks = ArrayList<PrintDeck>()
+        printDecks.addAll(parentPrintDecks)
+        printDecks.addAll(childPrintDecks)
 
         val bundle = Bundle()
         bundle.putParcelableArrayList(ARGUMENT_PRINT_DECKS, printDecks)
