@@ -89,7 +89,7 @@
                     android:src="@drawable/ok"
                     android:layout_gravity="center_vertical"
                     android:scaleType="fitCenter"
-                    android:visibility="@{coachViewModel.printLiveData.data.hasStrengthenMemory ? View.GONE : View.VISIBLE}"
+                    android:visibility="@{uiCard.cardEntity.hasStrengthenMemory ? View.GONE : View.VISIBLE}"
                     android:onClick="@{()-> coachViewModel.coachCardFinish()}"/>
 
             </LinearLayout>

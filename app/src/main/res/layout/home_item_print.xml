@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
         <variable
             name="printItem"
             type="com.ly.anki_assist_app.ui.home.PrintItem" />
@@ -75,8 +76,9 @@
             android:id="@+id/coach_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/home_card_coach_btn"
-            android:enabled="@{printItem.getEnable()}"
+            android:text="@{printItem.printEntity.hasStrengthenMemory ? @string/home_card_has_coach_btn : @string/home_card_coach_btn}"
+            android:backgroundTint="@{printItem.printEntity.hasStrengthenMemory ? @color/zero_count : @color/purple_500}"
+            android:visibility="@{printItem.getEnable() ? View.VISIBLE : View.INVISIBLE}"
             android:layout_marginStart="20dip"
             app:layout_constraintBaseline_toBaselineOf="@id/check_btn"
             app:layout_constraintLeft_toRightOf="@id/check_btn"
