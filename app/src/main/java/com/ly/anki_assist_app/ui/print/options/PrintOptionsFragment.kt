@@ -55,6 +55,7 @@ class PrintOptionsFragment : Fragment() {
         val deckAdapter = binding.recyclerView.adapter as DeckAadpter
         val parentPrintDecks = deckAdapter.parentList
             .filter { it.checked }
+            .filter { it.deck.deckId != -1L } // 排除掉仅类目
             .map {
                 PrintDeck.from(it.deck)
             }

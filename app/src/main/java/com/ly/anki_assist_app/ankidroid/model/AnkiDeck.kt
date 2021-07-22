@@ -4,9 +4,7 @@ import org.json.JSONArray
 
 data class AnkiDeck(
     val deckId: Long,
-    val fullName: String,
-    val rootDir: String,
-    val isSubDeck: Boolean,
+    val category: String,
     val name: String,
     val deckDueCounts: DeckDueCounts
 ) {
@@ -26,16 +24,18 @@ data class AnkiDeck(
 
         fun fromString(deckId: Long, deckName: String, deckCounts: String): AnkiDeck{
             val dirs = deckName.split("::")
-            var rootDir = ""
-            var isSubDeck = false
+            var category = ""
             var name = deckName
             if (dirs.size > 1) {
-                isSubDeck = true
                 name = dirs[dirs.size - 1]
-                rootDir = dirs[0]
+                category = dirs[0]
             }
 
-            return AnkiDeck(deckId, deckName, rootDir, isSubDeck, name, parseDeckCounts(deckCounts))
+            return AnkiDeck(deckId, category, name, parseDeckCounts(deckCounts))
+        }
+
+        fun fromName(name: String): AnkiDeck {
+            return AnkiDeck(-1, "", name, DeckDueCounts(0, 0, 0))
         }
     }
 }

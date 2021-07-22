@@ -33,27 +33,33 @@ class PrintOptionsViewModel : ViewModel() {
                 return@filter true
             }
 
-            val deckParentList = mutableListOf<DeckParent>()
             val parentMap = mutableMapOf<String, DeckParent>()
 
-            // 先创建一级目录
+            // 筛选出一级类别
             notPrintDueDecks
-                .filter { !it.isSubDeck }
+                .filter { it.category.isEmpty() }
                 .map {
-                    val deckParent = DeckParent(it, true, mutableListOf<DeckChild>())
-                    deckParentList.add(deckParent)
+                    val deckParent = DeckParent(it, false, mutableListOf<DeckChild>())
                     parentMap.put(it.name, deckParent)
                 }
 
-            // 归类二级目录
+            // 没有一级的创建一级类别
             notPrintDueDecks
-                .filter { it.isSubDeck }
+                .filter { it.category.isNotEmpty() }
+                .filter { !parentMap.containsKey(it.category) }
                 .map {
-                    val deckParent = parentMap.get(it.rootDir)
-                    deckParent?.children?.add(DeckChild(it, true))
+                    val deckParent = DeckParent(AnkiDeck.fromName(it.name), false, mutableListOf<DeckChild>())
+                    parentMap.put(it.category, deckParent)
                 }
 
-            emit(Resource.success(deckParentList))
+            // 分配子View
+            notPrintDueDecks
+                .filter { it.category.isNotEmpty() }
+                .map {
+                    val deckParent = parentMap.get(it.category)
+                    deckParent?.children?.add(DeckChild(it, false))
+                }
+            emit(Resource.success(parentMap.values.toList()))
         } catch (e: Exception) {
             emit(Resource.error("加载出错", null))
         }

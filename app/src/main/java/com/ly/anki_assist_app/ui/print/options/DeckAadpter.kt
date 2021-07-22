@@ -157,10 +157,10 @@ class DeckChildViewHolder(val adpter: DeckAadpter, val binding: ItemDeckBinding)
         binding.checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isPressed) { // 只处理点击后的状态改变
                 deckChild.checked = isChecked
-//                if(!deckParent.checked && isChecked) {
-//                    deckParent.checked = true
-//                    adpter.notifyParentChanged(parentPosition)
-//                }
+                if(!deckParent.checked && isChecked) {
+                    deckParent.checked = true
+                    adpter.notifyParentChanged(parentPosition)
+                }
             }
         }
     }
