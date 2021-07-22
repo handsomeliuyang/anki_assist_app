@@ -105,9 +105,7 @@ class DeckParent(val deck: AnkiDeck, var checked: Boolean = false, val children:
 
 }
 
-class DeckChild(val deck: AnkiDeck, var checked: Boolean){
-
-}
+data class DeckChild(val deck: AnkiDeck, var checked: Boolean)
 
 class DeckParentViewHolder(val adpter: DeckAadpter, val expandImage: Drawable, val collapseImage: Drawable, val binding: ItemDeckBinding) :
     ParentViewHolder<DeckParent, DeckChild>(binding.root) {

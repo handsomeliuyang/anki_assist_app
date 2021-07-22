@@ -42,9 +42,9 @@ class CardAppearance {
             // 添加头部
             content.append("<h2>温故而知新</h2>\n" +
                     "<h3>苟有恒，何必三更起五更眠；最无益，莫过一日曝十日寒</h3>\n" +
-                    "<table class=\"print_table\">\n" +
+                    "<table class=\"print_table\" style=\"font-size: 16px;\">\n" +
                     "   <tr class=\"print_tr\">\n" +
-                    "       <th width=\"50\" class=\"print_th\">序号</th>\n" +
+                    "       <th width=\"70\" class=\"print_th\">序号</th>\n" +
                     "       <th width=\"100%\" class=\"print_th\">问题</th>\n" +
                     "   </tr>\n")
 

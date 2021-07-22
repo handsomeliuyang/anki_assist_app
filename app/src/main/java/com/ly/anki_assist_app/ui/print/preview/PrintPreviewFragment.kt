@@ -8,6 +8,7 @@ import android.print.PrintManager
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.ankidroid.ui.MyWebView
 import com.ly.anki_assist_app.databinding.FragmentPrintPreviewBinding
@@ -26,6 +27,7 @@ class PrintPreviewFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private var jobName: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,8 +70,6 @@ class PrintPreviewFragment : Fragment() {
     }
 
     private fun printWebView(): Boolean {
-        val jobName = "print_due_cards_${SimpleDateFormat("yyyy-MM-dd").format(Date())}"
-
         viewModel.savePrintdata(jobName)
 
         val webView = _binding?.webview ?: return true
@@ -78,6 +78,10 @@ class PrintPreviewFragment : Fragment() {
             this.activity?.getSystemService(Context.PRINT_SERVICE) as PrintManager? ?: return true
         val printAdapter = webView.createPrintDocumentAdapter(jobName)
         printManager.print(jobName, printAdapter, PrintAttributes.Builder().build())
+
+        // 回到首页
+        this.findNavController().popBackStack(R.id.nav_home, false)
+
         return true
     }
 
@@ -85,12 +89,12 @@ class PrintPreviewFragment : Fragment() {
         _binding?.webview?.visibility = View.VISIBLE
         _binding?.messageTitle?.visibility = View.GONE
 
-        Timber.d("webview load url = %s", MyWebView.BASE_URL)
+        jobName = "卡片打印复习_${SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Date())}"
 
         // 显示所有卡片的问题
         _binding?.webview?.loadDataWithBaseURL(
             MyWebView.BASE_URL + "__viewer__.html",
-            displayString,
+            "${jobName} <br/> ${displayString}", // 文档添加标题
             "text/html",
             "utf-8",
             null
