@@ -50,8 +50,6 @@ class DeckApi {
                         deckList.add(ankiDeck)
                     } while (it.moveToNext())
                 }
-
-                Log.d("AnkiDroidHelper", "${deckList}")
             }
 
             return deckList

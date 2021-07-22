@@ -19,8 +19,7 @@ data class AnkiCard(
     var buttonCount: Int = 0,
     var nextReviewTimesString: String = "",
     var nextReviewTimes: List<String> = arrayListOf(),
-
-    var cardQA: AnkiCardQA = AnkiCardQA()
+//    var cardQA: AnkiCardQA = AnkiCardQA()
     ) {
 
     fun setReviewData(buttonCount: Int, nextReviewTimesString: String) {

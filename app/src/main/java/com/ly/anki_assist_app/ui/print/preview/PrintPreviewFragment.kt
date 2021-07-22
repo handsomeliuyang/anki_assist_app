@@ -38,8 +38,8 @@ class PrintPreviewFragment : Fragment() {
 
         _binding = FragmentPrintPreviewBinding.inflate(inflater, container, false)
 
-        viewModel.dueCardsString.observe(viewLifecycleOwner, Observer {
-            when(it.status) {
+        viewModel.deckEntitysStringLiveData.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
                 Status.SUCCESS -> displayCardQuestion(it.data ?: "")
                 Status.ERROR -> showMessage(it.message ?: "请求出错")
                 Status.LOADING -> showMessage("加载中...")
@@ -47,7 +47,8 @@ class PrintPreviewFragment : Fragment() {
         })
 
         // 获取参数
-        val printDecks = arguments?.getParcelableArrayList<PrintDeck>(ARGUMENT_PRINT_DECKS) ?: emptyList<PrintDeck>()
+        val printDecks = arguments?.getParcelableArrayList<PrintDeck>(ARGUMENT_PRINT_DECKS)
+            ?: emptyList<PrintDeck>()
         viewModel.setPlanDecks(printDecks)
 
         return binding.root
@@ -60,7 +61,7 @@ class PrintPreviewFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-       return when(item.itemId) {
+        return when (item.itemId) {
             R.id.action_print -> printWebView()
             else -> super.onOptionsItemSelected(item)
         }
@@ -73,7 +74,8 @@ class PrintPreviewFragment : Fragment() {
 
         val webView = _binding?.webview ?: return true
 
-        val printManager = this.activity?.getSystemService(Context.PRINT_SERVICE) as PrintManager? ?: return true
+        val printManager =
+            this.activity?.getSystemService(Context.PRINT_SERVICE) as PrintManager? ?: return true
         val printAdapter = webView.createPrintDocumentAdapter(jobName)
         printManager.print(jobName, printAdapter, PrintAttributes.Builder().build())
         return true

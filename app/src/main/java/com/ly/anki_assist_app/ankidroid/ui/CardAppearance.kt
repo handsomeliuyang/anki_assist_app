@@ -1,8 +1,7 @@
 package com.ly.anki_assist_app.ankidroid.ui
 
 import com.ly.anki_assist_app.App
-import com.ly.anki_assist_app.ankidroid.model.AnkiCard
-import com.ly.anki_assist_app.ui.print.preview.PrintDeckCards
+import com.ly.anki_assist_app.ankidroid.model.AnkiCardQA
 import com.ly.anki_assist_app.utils.Utils
 
 class CardAppearance {
@@ -34,7 +33,7 @@ class CardAppearance {
             return printTemplate.replace("::content::", content.toString())
         }
 
-        fun displayPrintString(list: List<PrintDeckCards>): String {
+        fun displayPrintString(nameList: List<String>, qaList: List<AnkiCardQA>): String {
             // 加载卡片布局模板
             val printTemplate = loadPrintTemplate()
 
@@ -49,19 +48,15 @@ class CardAppearance {
                     "       <th width=\"100%\" class=\"print_th\">问题</th>\n" +
                     "   </tr>\n")
 
-            for (printDeckCards in list) {
-                for ((index, card) in printDeckCards.cards.withIndex()) {
-                    content.append(
-                        printCard(
-                            printDeckCards.printDeck.name,
-                            index,
-                            printDeckCards.cards.size,
-                            card.cardQA.questionContent,
-                            card.cardQA.answerContent
-                        )
-                    )
-                }
+            val printCardList = nameList.mapIndexed { index, name ->
+                printCard(
+                    name,
+                    index,
+                    nameList.size,
+                    qaList.get(index).questionContent
+                )
             }
+            content.append(printCardList.joinToString())
 
             // 添加table的尾部
             content.append("</table>")
@@ -69,7 +64,7 @@ class CardAppearance {
             return printTemplate.replace("::content::", content.toString())
         }
 
-        private fun printCard(deckName: String, index: Int, total: Int, question: String, answer: String): String {
+        fun printCard(deckName: String, index: Int, total: Int, question: String): String {
             return "<tr class=\"print_tr\">" +
                         "<td class=\"print_td\">${deckName}<br>${index+1}/${total}</td>" +
                         "<td class=\"print_td\">" +

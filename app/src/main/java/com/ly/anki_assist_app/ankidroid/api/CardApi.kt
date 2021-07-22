@@ -70,7 +70,7 @@ class CardApi {
         }
 
         private fun retrieveCard(noteId: Long, cardOrd: Int): AnkiCard {
-            val ankiCardQA = getQuestionAndAnswer(noteId, cardOrd)
+//            val ankiCardQA = getQuestionAndAnswer(noteId, cardOrd)
 
             val ankiNoteInfo = getNoteInfo(noteId)
 
@@ -96,7 +96,7 @@ class CardApi {
 //            ankiCard.cardTemplateName = cardTemplateName
             ankiCard.fieldMap = fieldMap
             ankiCard.tags = ankiNoteInfo.tagSet
-            ankiCard.cardQA = ankiCardQA
+//            ankiCard.cardQA = ankiCardQA
             return ankiCard
         }
 
