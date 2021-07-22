@@ -9,8 +9,9 @@ import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.databinding.HomeItemOverviewBinding
 import com.ly.anki_assist_app.databinding.HomeItemPrintBinding
 import com.ly.anki_assist_app.printroom.PrintEntity
+import com.ly.anki_assist_app.printroom.PrintUtils
 
-class HomeAadpter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class HomeAadpter(val homeViewModel: HomeViewModel) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         const val VIEW_TYPE_OVERVIEW = 1
@@ -85,6 +86,9 @@ class HomeAadpter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 val bundle = Bundle()
                 bundle.putInt(ARGUMENT_PRINT_ID, printItem.printEntity.id)
                 it.findNavController().navigate(R.id.action_home_to_coach, bundle)
+            }
+            binding.deleteBtn.setOnClickListener {
+                homeViewModel.deletePrint(printItem.printEntity)
             }
             binding.executePendingBindings()
         }

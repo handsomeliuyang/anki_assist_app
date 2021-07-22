@@ -50,7 +50,7 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false).apply {
             viewmodel = homeViewModel
             lifecycleOwner = this@HomeFragment.viewLifecycleOwner
-            recyclerView.adapter = HomeAadpter()
+            recyclerView.adapter = HomeAadpter(homeViewModel)
             // 设置分隔线
             recyclerView.addItemDecoration(DividerItemDecoration(this@HomeFragment.context, DividerItemDecoration.VERTICAL))
         }

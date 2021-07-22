@@ -90,6 +90,14 @@ class HomeViewModel : ViewModel() {
         addSource(_dueAnkiDeck){update()}
         addSource(printList){update()}
     }
+
+    fun deletePrint(printEntity: PrintEntity){
+        viewModelScope.launch {
+            PrintUtils.asynDeletePrint(printEntity)
+            // 目的是为了刷新
+            _checkResult.value = _checkResult.value
+        }
+    }
 }
 
 data class Overview(

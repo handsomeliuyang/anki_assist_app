@@ -76,6 +76,19 @@ class PrintUtils {
 
             return printDao.getPrintById(printId)
         }
+
+        suspend fun asynDeletePrint(printEntity: PrintEntity){
+            withContext(Dispatchers.IO) {
+                deletePrint(printEntity)
+            }
+        }
+
+        private fun deletePrint(printEntity: PrintEntity) {
+            val database = PrintRoomDatabase.getDatabase()
+            val printDao = database.printDao()
+
+            return printDao.delete(printEntity)
+        }
     }
 
 }

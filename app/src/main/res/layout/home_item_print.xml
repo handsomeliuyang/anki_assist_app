@@ -34,7 +34,17 @@
             android:textAppearance="?attr/textAppearanceBody2"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:text="未检查" />
+
+        <ImageButton
+            android:id="@+id/delete_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/delete"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
         <TextView
             android:id="@+id/print_name"
