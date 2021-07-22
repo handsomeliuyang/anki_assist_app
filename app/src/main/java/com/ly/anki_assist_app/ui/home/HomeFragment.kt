@@ -56,11 +56,7 @@ class HomeFragment : Fragment() {
         }
 
         homeViewModel.overView.observe(viewLifecycleOwner, Observer {
-//            if (it.status == Status.SUCCESS) {
-//                it.data?.let { overView ->
             (_binding?.recyclerView?.adapter as HomeAadpter?)?.updateOverview(it)
-//                }
-//            }
         })
 
         homeViewModel.printList.observe(viewLifecycleOwner, Observer {

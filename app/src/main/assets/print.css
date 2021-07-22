@@ -15,6 +15,7 @@
 td img{
     display: block;
     width: 100%;
+    max-width: 350px;
 }
 
 .print_tr:nth-child(even) {

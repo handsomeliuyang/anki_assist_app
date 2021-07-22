@@ -56,7 +56,7 @@ class CardAppearance {
                     qaList.get(index).questionContent
                 )
             }
-            content.append(printCardList.joinToString())
+            content.append(printCardList.joinToString(""))
 
             // 添加table的尾部
             content.append("</table>")
@@ -69,7 +69,7 @@ class CardAppearance {
                         "<td class=\"print_td\">${deckName}<br>${index+1}/${total}</td>" +
                         "<td class=\"print_td\">" +
                             question +
-                            "<div style=\"height: 70px;\"></div>" +
+                            "<div style=\"height: 0px;\"></div>" +
                         "</td>" +
                     "</tr>"
         }
