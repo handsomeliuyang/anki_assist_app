@@ -190,6 +190,10 @@ data class UICard(
     fun needCoach():Boolean {
         // 针对 重复 和 困难 需要加强一下记忆
         val index = easyButtonIndexMap.get(cardEntity.answerEasy) ?: return false
+        val buttonCount = cardEntity.buttonCount
+        if(buttonCount == 3) {
+            return index <= 2
+        }
         return index <= 1
     }
 
