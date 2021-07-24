@@ -5,8 +5,10 @@ import java.util.*
 
 @Dao
 interface PrintDao {
+    @Query("SELECT * FROM print_table ORDER BY time DESC")
+    fun getPrints(): List<PrintEntity>
 
-    @Query("SELECT * FROM print_table WHERE time BETWEEN :start AND :end")
+    @Query("SELECT * FROM print_table WHERE time BETWEEN :start AND :end ORDER BY time DESC")
     fun getPrintsByDate(start: Long, end: Long): List<PrintEntity>
 
     @Query("SELECT * FROM print_table WHERE id=:printId")
@@ -20,5 +22,8 @@ interface PrintDao {
 
     @Delete
     fun delete(printEntity: PrintEntity)
+
+    @Query("DELETE FROM print_table WHERE time < :date")
+    fun deleteBeforeDate(date: Long)
 
 }

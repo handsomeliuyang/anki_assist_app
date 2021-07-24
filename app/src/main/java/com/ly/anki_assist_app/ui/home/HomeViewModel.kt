@@ -49,7 +49,9 @@ class HomeViewModel : ViewModel() {
             if(checkResult) {
                 val result = try {
                     // 查询今日的打印记录
-                    val list = PrintUtils.asynPrintsByDate(Date())
+//                    val list = PrintUtils.asynPrintsByDate(Date())
+                    // 查询所有的数据
+                    val list = PrintUtils.asynGetPrints()
                     val result: List<PrintItem> = list.map {
                         PrintItem(it)
                     }
@@ -72,7 +74,25 @@ class HomeViewModel : ViewModel() {
             val dueDecks = _dueAnkiDeck.value?.data ?: return
             val prints = printList.value?.data ?: emptyList()
 
-            val printDeckList = prints.flatMap {
+            val calendar = Calendar.getInstance()
+            calendar.time = Date()
+            calendar[Calendar.MILLISECOND] = 0
+            calendar[Calendar.SECOND] = 0
+            calendar[Calendar.MINUTE] = 0
+            calendar[Calendar.HOUR_OF_DAY] = 0
+            val todayStart = calendar.time.time.toLong()
+            calendar[Calendar.MILLISECOND] = 0
+            calendar[Calendar.SECOND] = 59
+            calendar[Calendar.MINUTE] = 59
+            calendar[Calendar.HOUR_OF_DAY] = 23
+            val todayEnd = calendar.time.time.toLong()
+
+            val printDeckList = prints
+                .filter { // 获取今天内的打印记录
+                    val time = it.printEntity.time?.time ?: return@filter false
+                    time in todayStart until todayEnd
+                }
+                .flatMap {
                 it.printEntity.deckEntitys
             }
 
@@ -96,6 +116,22 @@ class HomeViewModel : ViewModel() {
             PrintUtils.asynDeletePrint(printEntity)
             // 目的是为了刷新
             _checkResult.value = _checkResult.value
+        }
+    }
+
+    private val _messageLiveData = MutableLiveData<String>()
+    val messageLiveData: LiveData<String> = _messageLiveData
+
+    fun clearHistory() {
+        viewModelScope.launch {
+            try {
+                PrintUtils.asynClearHistoryBeforeDate(Date())
+                _messageLiveData.value = "清除成功"
+                // 目的是为了刷新
+                _checkResult.value = _checkResult.value
+            } catch (e: Exception) {
+                _messageLiveData.value = "清除失败"
+            }
         }
     }
 }

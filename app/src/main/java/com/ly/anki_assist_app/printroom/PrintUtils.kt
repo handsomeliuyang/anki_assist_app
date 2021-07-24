@@ -35,6 +35,19 @@ class PrintUtils {
             printDao.insertAll(*printEntitys)
         }
 
+        suspend fun asynGetPrints(): List<PrintEntity> {
+            return withContext(Dispatchers.IO) {
+                return@withContext getPrints()
+            }
+        }
+
+        private fun getPrints(): List<PrintEntity> {
+            val database = PrintRoomDatabase.getDatabase()
+            val printDao = database.printDao()
+
+            return printDao.getPrints()
+        }
+
         suspend fun asynPrintsByDate(date: Date): List<PrintEntity> {
             return withContext(Dispatchers.IO) {
                 return@withContext getPrintsByDate(date)
@@ -88,6 +101,27 @@ class PrintUtils {
             val printDao = database.printDao()
 
             return printDao.delete(printEntity)
+        }
+
+        suspend fun asynClearHistoryBeforeDate(date: Date){
+            withContext(Dispatchers.IO) {
+                clearHistoryBeforeDate(date)
+            }
+        }
+
+        private fun clearHistoryBeforeDate(date: Date) {
+            val database = PrintRoomDatabase.getDatabase()
+            val printDao = database.printDao()
+
+            val calendar = Calendar.getInstance()
+            calendar.time = date
+            calendar[Calendar.MILLISECOND] = 0
+            calendar[Calendar.SECOND] = 0
+            calendar[Calendar.MINUTE] = 0
+            calendar[Calendar.HOUR_OF_DAY] = 0
+            val start = calendar.time.time.toLong()
+
+            return printDao.deleteBeforeDate(start)
         }
     }
 

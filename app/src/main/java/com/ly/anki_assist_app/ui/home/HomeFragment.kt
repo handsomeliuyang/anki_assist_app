@@ -5,9 +5,7 @@ import android.content.pm.PackageManager
 import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -44,6 +42,8 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
+
         homeViewModel =
             ViewModelProvider(this).get(HomeViewModel::class.java)
 
@@ -65,6 +65,11 @@ class HomeFragment : Fragment() {
                     (_binding?.recyclerView?.adapter as HomeAadpter?)?.updatePrint(list)
                 }
             }
+        })
+
+        homeViewModel.messageLiveData.observe(viewLifecycleOwner, Observer {
+            val msg = it ?: return@Observer
+            Snackbar.make(requireView(), msg, Snackbar.LENGTH_LONG).show()
         })
 
         val retryBtn = binding.retry
@@ -138,5 +143,23 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu.clear()
+        inflater.inflate(R.menu.home, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.action_clear_history -> clearHistory()
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun clearHistory(): Boolean {
+        homeViewModel.clearHistory()
+        return true
     }
 }
