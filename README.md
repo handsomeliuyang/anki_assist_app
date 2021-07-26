@@ -16,11 +16,11 @@ AnkiDroid是一个开源软件，同时提供了对外的Api，适配做扩展�
 
 # 效果图
 
-<img src="screenshot/打印复习原型图.drawio.svg" align="right" width="40%" height="100%"></img>
+![](screenshot/打印复习原型图.drawio.svg)
 
-<img src="screenshot/家长检查原型图.drawio.svg" align="right" width="40%" height="100%"></img>
+![](screenshot/家长检查原型图.drawio.svg)
 
-<img src="screenshot/加强记忆原型图.drawio.svg" align="right" width="40%" height="100%"></img>
+![](screenshot/加强记忆原型图.drawio.svg)
 
 # 依赖库
 1. 实现展开Item效果：[Expandable RecyclerView](https://bignerdranch.github.io/expandable-recycler-view/)
