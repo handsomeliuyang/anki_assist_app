@@ -48,7 +48,7 @@ class PrintOptionsViewModel : ViewModel() {
                 .filter { it.category.isNotEmpty() }
                 .filter { !parentMap.containsKey(it.category) }
                 .map {
-                    val deckParent = DeckParent(AnkiDeck.fromName(it.name), false, mutableListOf<DeckChild>())
+                    val deckParent = DeckParent(AnkiDeck.fromName(it.category), false, mutableListOf<DeckChild>())
                     parentMap.put(it.category, deckParent)
                 }
 
