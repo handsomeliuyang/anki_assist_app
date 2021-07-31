@@ -196,6 +196,28 @@ data class PrintItem(
         }
         return true
     }
+    fun getStatInfo(): String {
+        var totalCounts = 0
+        var newCounts = 0
+        var reviewCounts = 0
+        var reinforceCounts = 0
+        printEntity.deckEntitys
+            .flatMap { it.cards }
+            .map {
+                totalCounts ++
+                if (it.buttonCount == 4) {
+                    reviewCounts ++
+                } else {
+                    newCounts ++
+                }
+                if(it.hasStrengthenMemory) reinforceCounts++
+            }
+        if (printEntity.hasStrengthenMemory) {
+            return "总/${totalCounts} 新/${newCounts} 复/${reviewCounts} 记忆加强/${reinforceCounts}"
+        }
+        return "总/${totalCounts} 新/${newCounts} 复/${reviewCounts}"
+    }
+
     fun getPrintInfo(): String {
         val about = printEntity.deckEntitys.map {
             "${it.name}(${it.total}张)"

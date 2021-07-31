@@ -59,6 +59,18 @@
             tools:text="print_due_cards_2021-07-13"/>
 
         <TextView
+            android:id="@+id/info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@{printItem.getStatInfo()}"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="?attr/colorSecondaryVariant"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/print_name"
+            tools:text="总/100 新/10 复/90 记忆加强/5"/>
+
+        <TextView
             android:id="@+id/hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -67,7 +79,7 @@
             android:textAppearance="?attr/textAppearanceBody2"
             android:textColor="?android:attr/textColorSecondary"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/print_name"
+            app:layout_constraintTop_toBottomOf="@id/info"
             tools:text="简介：复习 2 张"/>
 
         <Button
