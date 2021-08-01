@@ -82,13 +82,11 @@
                     tools:text="测试信息"
                     android:textColor="@android:color/black"
                     android:gravity="center" />
-
-                <ImageButton
-                    android:layout_width="45dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ok"
-                    android:layout_gravity="center_vertical"
-                    android:scaleType="fitCenter"
+                
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="已温故"
                     android:visibility="@{uiCard.cardEntity.hasStrengthenMemory ? View.GONE : View.VISIBLE}"
                     android:onClick="@{()-> coachViewModel.coachCardFinish()}"/>
 
