@@ -52,6 +52,7 @@ class CheckViewModel : BaseCardViewModel() {
 
     private val _syncAnkiLiveData = MutableLiveData<Resource<Boolean>>()
     val syncAnkiLivedata: LiveData<Resource<Boolean>> = _syncAnkiLiveData
+    
     fun syncAnki() {
         val printEntity = printLiveData.value?.data ?: return
         val uiCards = uiCardsLiveData.value?.data ?: return

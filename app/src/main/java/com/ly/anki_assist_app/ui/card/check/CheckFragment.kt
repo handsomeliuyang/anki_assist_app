@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ly.anki_assist_app.R
+import com.ly.anki_assist_app.ankidroid.api.AnkiAppApi
 import com.ly.anki_assist_app.ankidroid.ui.MyWebView
 import com.ly.anki_assist_app.databinding.FragmentCheckBinding
 import com.ly.anki_assist_app.ui.home.ARGUMENT_PRINT_ID
@@ -73,6 +74,28 @@ class CheckFragment : Fragment() {
 
     private var _syncAlertDialog: AlertDialog? = null
 
+    private fun showSyncState(){
+        val context = this.context ?: return
+        if (_syncAlertDialog?.isShowing == true) {
+            _syncAlertDialog?.dismiss()
+        }
+        _syncAlertDialog = MaterialAlertDialogBuilder(context)
+            .setTitle("声明")
+            .setMessage("同步之前，请确保已打开Anki ？")
+            .setNegativeButton("同步") { dialog, which ->
+                // 同步数据库，同步Anki
+                viewModel.syncAnki()
+            }
+            .setPositiveButton("调起Anki") { dialog, which ->
+                AnkiAppApi.startAnkiDroid()
+            }
+            .show()
+        // 重写listener，防止dismiss
+        _syncAlertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
+            AnkiAppApi.startAnkiDroid()
+        }
+    }
+
     private fun showSyncSuccess() {
         val context = this.context ?: return
         if (_syncAlertDialog?.isShowing == true) {
@@ -80,11 +103,18 @@ class CheckFragment : Fragment() {
         }
         _syncAlertDialog = MaterialAlertDialogBuilder(context)
             .setTitle("成功")
-            .setMessage("检查完成，同步成功！！！")
-            .setPositiveButton("确定") { dialog, which ->
+            .setMessage("检查完成，同步成功！！！\n请求打开Anki同步，并把学习中的卡片点掉。")
+            .setNegativeButton("回到首页") { dialog, which ->
                 this.findNavController().popBackStack()
             }
+            .setPositiveButton("调起Anki") { dialog, which ->
+                AnkiAppApi.startAnkiDroid()
+            }
             .show()
+        // 重写listener，防止dismiss
+        _syncAlertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.setOnClickListener {
+            AnkiAppApi.startAnkiDroid()
+        }
     }
 
     private fun showSyncLoading() {
@@ -156,8 +186,7 @@ class CheckFragment : Fragment() {
     }
 
     private fun checkFinish(): Boolean {
-        // 同步数据库，同步Anki
-        viewModel.syncAnki()
+        showSyncState()
         return true
     }
 }
