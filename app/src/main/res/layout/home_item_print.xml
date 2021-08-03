@@ -25,18 +25,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             tools:text="2021-07-14 5:30:222"/>
 
-        <TextView
-            android:id="@+id/status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/holo_red_light"
-            android:text="@{printItem.getStateText()}"
-            android:textAppearance="?attr/textAppearanceBody2"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="未检查" />
-
         <ImageButton
             android:id="@+id/delete_btn"
             android:layout_width="20dp"
@@ -57,6 +45,17 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/name"
             tools:text="print_due_cards_2021-07-13"/>
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_red_light"
+            android:text="@{printItem.getStateText()}"
+            android:textAppearance="?attr/textAppearanceBody2"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBaseline_toBaselineOf="@id/print_name"
+            tools:text="未检查" />
 
         <TextView
             android:id="@+id/info"
