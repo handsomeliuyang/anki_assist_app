@@ -6,13 +6,13 @@ plugins {
 }
 
 android {
-    compileSdk 29
+    compileSdk 30
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.ly.anki_assist_app"
-        minSdk 26
-        targetSdk 29
+        minSdk 23
+        targetSdk 30
         versionCode 4
         versionName "1.3"
 
