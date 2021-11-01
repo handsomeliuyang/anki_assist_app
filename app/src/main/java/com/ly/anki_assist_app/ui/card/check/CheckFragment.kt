@@ -12,6 +12,7 @@ import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.ankidroid.api.AnkiAppApi
 import com.ly.anki_assist_app.ankidroid.ui.MyWebView
 import com.ly.anki_assist_app.databinding.FragmentCheckBinding
+import com.ly.anki_assist_app.ui.card.CARD_STATE_ANSWER
 import com.ly.anki_assist_app.ui.home.ARGUMENT_PRINT_ID
 import com.ly.anki_assist_app.utils.Status
 import kotlinx.coroutines.GlobalScope
@@ -54,6 +55,11 @@ class CheckFragment : Fragment() {
             if(it.status == Status.SUCCESS) {
                 displayCardQuestion(it.data ?: "")
             }
+        })
+
+        viewModel.curCardState.observe(this.viewLifecycleOwner, Observer {
+            val cardState = it ?: CARD_STATE_ANSWER
+            _binding?.cardSwitch?.text = if (cardState == CARD_STATE_ANSWER) "问题" else "答案"
         })
 
         // 监听同步状态，显示弹窗

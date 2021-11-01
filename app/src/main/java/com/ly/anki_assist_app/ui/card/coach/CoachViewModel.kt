@@ -4,11 +4,12 @@ import androidx.lifecycle.*
 import com.ly.anki_assist_app.printroom.PrintEntity
 import com.ly.anki_assist_app.ui.card.ACTION_NEXT
 import com.ly.anki_assist_app.ui.card.BaseCardViewModel
+import com.ly.anki_assist_app.ui.card.CARD_STATE_QUESTION
 import com.ly.anki_assist_app.ui.card.UICard
 import com.ly.anki_assist_app.utils.Resource
 import kotlinx.coroutines.launch
 
-class CoachViewModel : BaseCardViewModel() {
+class CoachViewModel : BaseCardViewModel(CARD_STATE_QUESTION) {
 
     override fun printEntityToUICard(printEntity: PrintEntity): List<UICard> {
         return printEntity.deckEntitys

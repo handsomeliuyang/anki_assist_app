@@ -27,6 +27,7 @@
 
     <string name="home_card_has_check_btn">已检查</string>
     <string name="home_card_check_btn">家长检查</string>
+
     <string name="home_card_has_coach_btn">已加强</string>
     <string name="home_card_coach_btn">加强记忆</string>
 
@@ -38,5 +39,9 @@
     <string name="action_options_ok">确认</string>
 
     <string name="action_clear_history">清除历史记录</string>
+
+    <!--加强记忆页面-->
+    <string name="coach_review_done">结束</string>
+    <string name="coach_review">已温故</string>
 
 </resources>

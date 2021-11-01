@@ -17,7 +17,10 @@ const val ACTION_NEXT = 1
 const val ACTION_REFRESH = 0
 const val ACTION_PREV = -1
 
-abstract class BaseCardViewModel() : ViewModel() {
+const val CARD_STATE_QUESTION = 0
+const val CARD_STATE_ANSWER = 1
+
+abstract class BaseCardViewModel(val defaultCardState: Int) : ViewModel() {
     private val _printId = MutableLiveData<Int>()
     fun setPrintId(printId: Int) {
         _printId.value = printId
@@ -52,7 +55,6 @@ abstract class BaseCardViewModel() : ViewModel() {
     abstract fun printEntityToUICard(printEntity: PrintEntity): List<UICard>
 
     private val _action = MutableLiveData<Int>()
-//    val action: LiveData<Int> = _action
     fun emitAction(action: Int){
         _action.value = action
     }
@@ -95,8 +97,8 @@ abstract class BaseCardViewModel() : ViewModel() {
         addSource(uiCardsLiveData){update(true)}
     }
 
-    val curUICardString = curUICardLiveData.switchMap { resource ->
-        liveData<Resource<String>> {
+    private val curAnkiCardQA = curUICardLiveData.switchMap { resource ->
+        liveData<Resource<AnkiCardQA>> {
             if (resource.status == Status.ERROR) {
                 emit(Resource.error(resource.message ?: "Error", null))
                 return@liveData
@@ -113,12 +115,51 @@ abstract class BaseCardViewModel() : ViewModel() {
                     cardEntity.noteId,
                     cardEntity.cardOrd,
                 )
-                emit(Resource.success(CardAppearance.displayCheckString(ankiCardQA.answerContent)))
+                emit(Resource.success(ankiCardQA))
             } catch (e: Exception) {
                 emit(Resource.error("Cards String Loading Error", null))
             }
         }
     }
+
+    private val _switchAction = MutableLiveData<Boolean>()
+    fun emitSwitchAction(){
+        _switchAction.value = true
+    }
+
+    val curCardState : LiveData<Int> = MediatorLiveData<Int>().apply {
+        fun switch(){
+            val curState = value ?: defaultCardState
+            value = (curState+1)%2
+        }
+        fun reset(){
+            value = defaultCardState
+        }
+
+        addSource(_switchAction) {switch()}
+        addSource(curAnkiCardQA){reset()}
+    }
+
+    val curUICardString = curCardState.switchMap { resource ->
+        liveData<Resource<String>> {
+            if (curAnkiCardQA.value?.status == Status.ERROR) {
+                emit(Resource.error(curAnkiCardQA.value?.message ?: "Error", null))
+                return@liveData
+            }
+            if(curAnkiCardQA.value?.status == Status.LOADING) {
+                emit(Resource.loading("加载中...", null))
+                return@liveData
+            }
+
+            try {
+                val ankiCardQA: AnkiCardQA = curAnkiCardQA.value?.data ?: return@liveData
+                emit(Resource.success(CardAppearance.displayCheckString(if (resource == CARD_STATE_ANSWER) ankiCardQA.answerContent else ankiCardQA.questionContent)))
+            } catch (e: Exception) {
+                emit(Resource.error("Cards String Loading Error", null))
+            }
+        }
+    }
+
 
     fun prevAction(){
         emitAction(ACTION_PREV)

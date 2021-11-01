@@ -11,6 +11,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ly.anki_assist_app.R
 import com.ly.anki_assist_app.ankidroid.ui.MyWebView
 import com.ly.anki_assist_app.databinding.FragmentCoachBinding
+import com.ly.anki_assist_app.ui.card.CARD_STATE_ANSWER
+import com.ly.anki_assist_app.ui.card.CARD_STATE_QUESTION
 import com.ly.anki_assist_app.ui.home.ARGUMENT_PRINT_ID
 import com.ly.anki_assist_app.utils.Status
 import kotlinx.coroutines.GlobalScope
@@ -52,6 +54,11 @@ class CoachFragment : Fragment() {
             if (it.status == Status.SUCCESS) {
                 displayCardQuestion(it.data ?: "")
             }
+        })
+
+        viewModel.curCardState.observe(this.viewLifecycleOwner, Observer {
+            val cardState = it ?: CARD_STATE_QUESTION
+            _binding?.cardSwitch?.text = if (cardState == CARD_STATE_ANSWER) "问题" else "答案"
         })
 
         viewModel.coachFinishLivedata.observe(viewLifecycleOwner, Observer {

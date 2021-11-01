@@ -9,17 +9,14 @@ import com.ly.anki_assist_app.printroom.CardEntity
 import com.ly.anki_assist_app.printroom.DeckEntity
 import com.ly.anki_assist_app.printroom.PrintEntity
 import com.ly.anki_assist_app.printroom.PrintUtils
-import com.ly.anki_assist_app.ui.card.ACTION_NEXT
-import com.ly.anki_assist_app.ui.card.ACTION_REFRESH
-import com.ly.anki_assist_app.ui.card.BaseCardViewModel
-import com.ly.anki_assist_app.ui.card.UICard
+import com.ly.anki_assist_app.ui.card.*
 import com.ly.anki_assist_app.utils.Resource
 import com.ly.anki_assist_app.utils.Status
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class CheckViewModel : BaseCardViewModel() {
+class CheckViewModel : BaseCardViewModel(CARD_STATE_ANSWER) {
 
     override fun printEntityToUICard(printEntity: PrintEntity): List<UICard> {
         return printEntity.deckEntitys
